@@ -7,7 +7,9 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap" rel="stylesheet">
+
+<!-- Link Font Dinamik -->
+    <link id="dynamic-google-fonts" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400..900&family=Cormorant+Garamond:ital,wght@0,400..700;1,400..700&family=Inter:wght@200..800&family=Lato:ital,wght@0,300..900;1,300..900&family=Lora:ital,wght@0,400..700;1,400..700&family=Merriweather:ital,wght@0,300..900;1,300..900&family=Montserrat:ital,wght@0,200..800;1,200..800&family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&family=Poppins:ital,wght@0,200..900;1,200..900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
 <script>
@@ -34,7 +36,7 @@
             }
         }
     </script>
-    <style>
+    <style id="custom-font-style">
         html {
             scroll-behavior: smooth;
         }
@@ -61,6 +63,14 @@
             background: #722F5F;
             border-radius: 10px;
         }
+
+/* Dynamic Font Injection CSS */
+        .font-serif {
+            font-family: 'Playfair Display', serif !important;
+        }
+        body, .font-sans {
+            font-family: 'Plus Jakarta Sans', sans-serif !important;
+        }
     </style>
 </head>
 <body class="font-sans text-slate-800 bg-brand-softPink selection:bg-brand-plum selection:text-white overflow-x-hidden">
@@ -68,26 +78,39 @@
 <header class="sticky top-0 z-50 bg-white border-b border-slate-100 shadow-sm transition-all duration-300">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-20 sm:h-24">
-                <a href="#" onclick="showPage('main')" class="flex items-center py-2">
-                    <img src="https://arleta.site/interactivelink/118/logo_syifacare.webp" 
-                         alt="Syifa Care Confinement Care Logo" 
-                         class="h-14 sm:h-16 md:h-20 w-auto object-contain transition-all"
-                         onerror="this.src='https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?q=80&w=100&auto=format&fit=crop'">
-                </a>
 
-<nav class="hidden lg:flex items-center gap-6 xl:gap-8">
+<!-- LOGO & UCAPAN WELCOME ADMIN -->
+                <div class="flex items-center gap-3 sm:gap-4 py-2 shrink-0">
+                    <a href="#" onclick="showPage('main')" class="flex items-center">
+                        <img src="https://arleta.site/interactivelink/118/logo_syifacare.webp" 
+                             alt="Syifa Care Confinement Care Logo" 
+                             class="h-14 sm:h-16 md:h-20 w-auto object-contain transition-all"
+                             onerror="this.src='https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?q=80&w=100&auto=format&fit=crop'">
+                    </a>
+                    <span id="admin-welcome-text" style="display: none;" class="font-serif text-xs sm:text-sm md:text-base font-bold text-brand-plum border-l-2 border-slate-200 pl-3 sm:pl-4">
+                        Selamat Datang Admin xxx
+                    </span>
+                </div>
+
+<!-- NAVIGASI AWAM -->
+                <nav id="public-nav" class="hidden lg:flex items-center gap-6 xl:gap-8">
                     <a href="#home" onclick="showPage('main')" class="text-xs xl:text-sm font-bold text-brand-plum tracking-wide uppercase transition-colors">HOME</a>
                     <a href="#tentang-kami" onclick="showPage('main')" class="text-xs xl:text-sm font-bold text-slate-700 hover:text-brand-plum tracking-wide uppercase transition-colors">TENTANG KAMI</a>
                     <a href="#pakej" onclick="showPage('main')" class="text-xs xl:text-sm font-bold text-slate-700 hover:text-brand-plum tracking-wide uppercase transition-colors">PAKEJ</a>
                     <a href="#kenapa-kami" onclick="showPage('main')" class="text-xs xl:text-sm font-bold text-slate-700 hover:text-brand-plum tracking-wide uppercase transition-colors">SERVIS</a>
                     <a href="#testimoni" onclick="showPage('main')" class="text-xs xl:text-sm font-bold text-slate-700 hover:text-brand-plum tracking-wide uppercase transition-colors">TESTIMONI</a>
                     <a href="#hubungi" onclick="showPage('main')" class="text-xs xl:text-sm font-bold text-slate-700 hover:text-brand-plum tracking-wide uppercase transition-colors">HUBUNGI</a>
-                    <!-- Navigasi Tambahan Kursus & CL -->
                     <a href="javascript:void(0)" onclick="showPage('kursus')" class="text-xs xl:text-sm font-bold text-slate-700 hover:text-brand-plum tracking-wide uppercase transition-colors">KURSUS</a>
                     <a href="javascript:void(0)" onclick="showPage('cl')" class="text-xs xl:text-sm font-bold text-slate-700 hover:text-brand-plum tracking-wide uppercase transition-colors">CL</a>
-</nav>
 
-<div class="hidden sm:flex items-center">
+<button onclick="handleAdminNavClick()" class="text-xs xl:text-sm font-bold text-red-600 hover:text-red-800 tracking-wide uppercase transition-colors flex items-center gap-1.5 bg-red-50 px-3 py-1.5 rounded-full border border-red-200">
+                        <i class="fa-solid fa-lock text-xs"></i>
+                        <span>ADMIN</span>
+                    </button>
+                </nav>
+
+<!-- PUBLIC CTA WHATSAPP -->
+                <div id="public-cta" class="hidden sm:flex items-center">
                     <a href="https://wa.me/60184619099?text=Hi%20Syifa%20Care,%20saya%20berminat%20dengan%20servis%20confinement%20care." 
                        target="_blank" 
                        class="inline-flex items-center gap-2 bg-gradient-to-r from-brand-plum to-brand-teal text-white px-6 py-2.5 rounded-full font-bold text-xs xl:text-sm tracking-wider shadow-md hover:opacity-90 transition-all transform hover:-translate-y-0.5">
@@ -96,7 +119,28 @@
                     </a>
                 </div>
 
-<button id="mobile-menu-btn" class="lg:hidden p-2 rounded-lg text-brand-plum hover:bg-brand-plumLight transition-colors">
+<!-- NAVIGASI ADMIN -->
+                <div id="admin-nav" style="display: none;" class="items-center gap-2 sm:gap-3">
+                    <button id="btn-nav-add-admin" onclick="openAddAdminModal()" class="hidden inline-flex items-center gap-2 bg-gradient-to-r from-brand-plum to-brand-teal text-white px-4 sm:px-5 py-2 sm:py-2.5 rounded-full text-xs font-bold shadow-md hover:opacity-90 transition-all">
+                        <i class="fa-solid fa-user-plus"></i>
+                        <span>Tambah Admin</span>
+                    </button>
+                    <button id="btn-nav-add-cl" onclick="openAddClModal()" class="hidden inline-flex items-center gap-2 bg-gradient-to-r from-brand-plum to-brand-teal text-white px-4 sm:px-5 py-2 sm:py-2.5 rounded-full text-xs font-bold shadow-md hover:opacity-90 transition-all">
+                        <i class="fa-solid fa-plus"></i>
+                        <span>Tambah CL</span>
+                    </button>
+                    <button id="btn-nav-add-order" onclick="openAddOrderModal()" class="hidden inline-flex items-center gap-2 bg-gradient-to-r from-amber-600 to-yellow-500 text-white px-4 sm:px-5 py-2 sm:py-2.5 rounded-full text-xs font-bold shadow-md hover:opacity-90 transition-all">
+                        <i class="fa-solid fa-cart-plus"></i>
+                        <span>Tambah Order</span>
+                    </button>
+                    <button onclick="handleAdminLogout()" class="inline-flex items-center gap-2 bg-slate-100 hover:bg-slate-200 text-slate-700 px-4 sm:px-5 py-2 sm:py-2.5 rounded-full text-xs font-bold transition-all border border-slate-300">
+                        <i class="fa-solid fa-right-from-bracket"></i>
+                        <span>Log Keluar</span>
+                    </button>
+                </div>
+
+<!-- MOBILE MENU BUTTON -->
+                <button id="mobile-menu-btn" class="lg:hidden p-2 rounded-lg text-brand-plum hover:bg-brand-plumLight transition-colors">
                     <i class="fa-solid fa-bars text-2xl"></i>
                 </button>
             </div>
@@ -110,10 +154,11 @@
                 <a href="#kenapa-kami" onclick="showPage('main')" class="block px-3 py-2 rounded-md text-base font-medium text-slate-600 hover:bg-slate-50 hover:text-brand-plum">SERVIS</a>
                 <a href="#testimoni" onclick="showPage('main')" class="block px-3 py-2 rounded-md text-base font-medium text-slate-600 hover:bg-slate-50 hover:text-brand-plum">TESTIMONI</a>
                 <a href="#hubungi" onclick="showPage('main')" class="block px-3 py-2 rounded-md text-base font-medium text-slate-600 hover:bg-slate-50 hover:text-brand-plum">HUBUNGI</a>
-                <!-- Navigasi Tambahan Mobile -->
                 <a href="javascript:void(0)" onclick="showPage('kursus')" class="block px-3 py-2 rounded-md text-base font-medium text-slate-600 hover:bg-slate-50 hover:text-brand-plum">KURSUS</a>
                 <a href="javascript:void(0)" onclick="showPage('cl')" class="block px-3 py-2 rounded-md text-base font-medium text-slate-600 hover:bg-slate-50 hover:text-brand-plum">CL</a>
-                <div class="pt-3 border-t border-slate-100">
+                <a href="javascript:void(0)" onclick="handleAdminNavClick()" class="block px-3 py-2 rounded-md text-base font-bold text-red-600 bg-red-50">ADMIN PANEL</a>
+
+<div class="pt-3 border-t border-slate-100">
                     <a href="https://wa.me/60184619099?text=Hi%20Syifa%20Care,%20saya%20berminat%20dengan%20servis%20confinement%20care." 
                        target="_blank" 
                        class="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-brand-plum to-brand-teal text-white py-3 rounded-full font-bold shadow-md">
@@ -125,7 +170,7 @@
         </div>
     </header>
 
-<!-- KONTENA UTAMA UNTUK MENGAWAL SPA -->
+<!-- KONTENA UTAMA UTAMA -->
 <div id="main-content">
 
 <section id="home" class="relative min-h-[600px] md:min-h-[700px] flex items-center bg-cover bg-center overflow-hidden" style="background-image: url('https://arleta.site/interactivelink/118/hero.png');">
@@ -1204,10 +1249,9 @@
         </div>
     </div>
 
-<!-- ================= MODAL POPUP BARU: PAKEJ DIRAJA ================= -->
+<!-- ================= MODAL POPUP: PAKEJ DIRAJA ================= -->
     <div id="diraja-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 hidden backdrop-blur-sm transition-all animate-fadeIn">
         <div class="bg-white rounded-[2rem] shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden flex flex-col">
-            <!-- Header Modal -->
             <div class="p-6 border-b border-yellow-200 flex items-center justify-between bg-gradient-to-r from-amber-600 to-yellow-500 text-white">
                 <div>
                     <h3 class="font-serif text-2xl font-black tracking-wide uppercase flex items-center gap-2">
@@ -1220,9 +1264,7 @@
                 </button>
             </div>
 
-<!-- Kandungan Utama Modal -->
-            <div class="p-6 overflow-y-auto custom-scrollbar space-y-8 bg-brand-softPink">
-                <!-- Kad Ringkasan Info Utama -->
+<div class="p-6 overflow-y-auto custom-scrollbar space-y-8 bg-brand-softPink">
                 <div class="bg-white p-5 rounded-2xl border border-yellow-100 shadow-sm grid grid-cols-1 md:grid-cols-2 gap-4 text-sm font-medium">
                     <div class="space-y-2">
                         <p class="text-slate-600"><span class="font-bold text-amber-700"><i class="fa-regular fa-clock mr-1"></i> Sesi Lawatan:</span> Daily Visit 12 jam (STAY IN 12 JAM)</p>
@@ -1238,8 +1280,7 @@
                     </div>
                 </div>
 
-<!-- Jadual Harga Pakej Diraja -->
-                <div>
+<div>
                     <h4 class="font-serif text-lg font-bold text-amber-700 mb-3 flex items-center gap-2">
                         <i class="fa-solid fa-tags text-sm"></i> Senarai Harga Mengikut Tempoh
                     </h4>
@@ -1262,14 +1303,12 @@
                     </div>
                 </div>
 
-<!-- Pecahan Data Rawatan & Servis Pakej Diraja -->
-                <div>
+<div>
                     <h4 class="font-serif text-lg font-bold text-amber-700 mb-4 flex items-center gap-2">
                         <i class="fa-solid fa-notes-medical text-sm"></i> Perincian Servis Mengikut Hari (Pakej Diraja)
                     </h4>
 
 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <!-- 7 Hari -->
                         <div class="bg-white p-5 rounded-2xl border border-yellow-100 shadow-sm space-y-3 flex flex-col justify-between">
                             <div>
                                 <div class="flex justify-between items-center border-b border-amber-50 pb-2 mb-3">
@@ -1312,8 +1351,7 @@
                             </div>
                         </div>
 
-<!-- 14 Hari -->
-                        <div class="bg-white p-5 rounded-2xl border border-yellow-100 shadow-sm space-y-3 flex flex-col justify-between">
+<div class="bg-white p-5 rounded-2xl border border-yellow-100 shadow-sm space-y-3 flex flex-col justify-between">
                             <div>
                                 <div class="flex justify-between items-center border-b border-amber-50 pb-2 mb-3">
                                     <span class="font-bold text-slate-800 text-sm md:text-base">2. Pakej 14 Hari</span>
@@ -1355,8 +1393,7 @@
                             </div>
                         </div>
 
-<!-- 21 Hari -->
-                        <div class="bg-white p-5 rounded-2xl border border-yellow-100 shadow-sm space-y-3 flex flex-col justify-between">
+<div class="bg-white p-5 rounded-2xl border border-yellow-100 shadow-sm space-y-3 flex flex-col justify-between">
                             <div>
                                 <div class="flex justify-between items-center border-b border-amber-50 pb-2 mb-3">
                                     <span class="font-bold text-slate-800 text-sm md:text-base">3. Pakej 21 Hari</span>
@@ -1398,8 +1435,7 @@
                             </div>
                         </div>
 
-<!-- 30 Hari -->
-                        <div class="bg-white p-5 rounded-2xl border border-yellow-100 shadow-sm space-y-3 flex flex-col justify-between">
+<div class="bg-white p-5 rounded-2xl border border-yellow-100 shadow-sm space-y-3 flex flex-col justify-between">
                             <div>
                                 <div class="flex justify-between items-center border-b border-amber-50 pb-2 mb-3">
                                     <span class="font-bold text-slate-800 text-sm md:text-base">4. Pakej 30 Hari</span>
@@ -1442,8 +1478,7 @@
                             </div>
                         </div>
 
-<!-- 44 Hari (TERBARU & EKSKLUSIF) -->
-                        <div class="bg-white p-5 rounded-2xl border border-amber-300 shadow-sm space-y-3 flex flex-col justify-between md:col-span-2 border-dashed">
+<div class="bg-white p-5 rounded-2xl border border-amber-300 shadow-sm space-y-3 flex flex-col justify-between md:col-span-2 border-dashed">
                             <div>
                                 <div class="flex justify-between items-center border-b border-amber-200 pb-2 mb-3">
                                     <span class="font-bold text-amber-900 text-sm md:text-base flex items-center gap-1.5"><i class="fa-solid fa-star text-amber-500"></i> 5. Pakej Premium Maksimum 44 Hari</span>
@@ -1491,8 +1526,7 @@
                 </div>
             </div>
 
-<!-- Footer Modal -->
-            <div class="p-4 border-t border-purple-100 bg-white flex flex-col sm:flex-row gap-3 justify-end items-center">
+<div class="p-4 border-t border-purple-100 bg-white flex flex-col sm:flex-row gap-3 justify-end items-center">
                 <button onclick="closeDirajaModal()" class="w-full sm:w-auto text-xs font-bold text-slate-500 bg-slate-100 hover:bg-slate-200 py-3 px-6 rounded-full transition-colors">
                     TUTUP INFO
                 </button>
@@ -1640,7 +1674,7 @@
 
 </div> <!-- TAMAT KONTENA UTAMA MAIN-CONTENT -->
 
-<!-- SEKSYEN PAGE BARU 1: KURSUS (DUMMY CONTENT) -->
+<!-- SEKSYEN PAGE BARU 1: KURSUS -->
 <section id="kursus-page" class="hidden py-24 bg-white min-h-[70vh]">
     <div class="max-w-4xl mx-auto px-4 text-center space-y-6">
         <h2 class="font-serif text-3xl sm:text-5xl font-bold text-brand-plum uppercase">Halaman Kursus Syifa Care</h2>
@@ -1661,7 +1695,7 @@
     </div>
 </section>
 
-<!-- SEKSYEN PAGE BARU 2: CL (DUMMY CONTENT) -->
+<!-- SEKSYEN PAGE BARU 2: CL -->
 <section id="cl-page" class="hidden py-24 bg-brand-softPink min-h-[70vh]">
     <div class="max-w-4xl mx-auto px-4 text-center space-y-6">
         <h2 class="font-serif text-3xl sm:text-5xl font-bold text-brand-teal uppercase">Halaman Confinement Lady (CL)</h2>
@@ -1672,7 +1706,7 @@
         <div class="bg-white p-8 rounded-[2rem] border-2 border-[#C6E9E6] max-w-xl mx-auto text-left space-y-3 shadow-sm">
             <h4 class="font-bold text-slate-800 text-lg">Mengapa Memilih CL Syifa Care?</h4>
             <ul class="space-y-2 text-sm text-slate-600">
-                <li><i class="fa-solid fa-check text-brand-teal mr-2"></i> Lulus tapisan kesihatan & ujian praktikal yang ketat.</li>
+                <li><i class="fa-solid fa-check text-brand-teal mr-2"></i> Lulus tapisan kesihatan & ujian practical yang ketat.</li>
                 <li><i class="fa-solid fa-check text-brand-teal mr-2"></i> Memiliki sijil kemahiran rawatan postpartum yang sah.</li>
                 <li><i class="fa-solid fa-check text-brand-teal mr-2"></i> Mengamalkan etika kerja yang profesional, ikhlas dan penyayang.</li>
             </ul>
@@ -1680,6 +1714,414 @@
     </div>
 </section>
 
+<!-- ================= DASHBOARD ADMIN ================= -->
+<section id="admin-dashboard-page" class="hidden py-12 bg-slate-50 min-h-[85vh]">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
+
+<!-- KAD STATISTIK & KAD FONT (SUPERADMIN SAHAJA) -->
+        <div id="superadmin-top-section" style="display: none;" class="space-y-6">
+
+<!-- FILTER TARIKH MULA & TARIKH AKHIR STATISTIK ORDER (SUPERADMIN) -->
+            <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex flex-col md:flex-row items-center justify-between gap-4">
+                <div class="flex items-center gap-2 text-slate-700 font-bold text-sm">
+                    <i class="fa-solid fa-calendar-range text-brand-plum text-lg"></i>
+                    <span>Tapis Julat Tarikh Laporan:</span>
+                </div>
+                <div class="flex flex-wrap items-center gap-3 w-full md:w-auto">
+                    <div>
+                        <label class="block text-[10px] font-bold text-slate-400 uppercase">Tarikh Mula</label>
+                        <input type="date" id="superadmin-start-date" onchange="handleDateFilterChange('start')" class="px-3 py-1.5 rounded-xl border border-slate-300 text-xs font-bold text-slate-700 bg-slate-50 focus:outline-none focus:border-brand-plum">
+                    </div>
+                    <span class="text-slate-300 hidden sm:inline pt-3">-</span>
+                    <div>
+                        <label class="block text-[10px] font-bold text-slate-400 uppercase">Tarikh Akhir</label>
+                        <input type="date" id="superadmin-end-date" onchange="handleDateFilterChange('end')" class="px-3 py-1.5 rounded-xl border border-slate-300 text-xs font-bold text-slate-700 bg-slate-50 focus:outline-none focus:border-brand-plum">
+                    </div>
+                    <div class="pt-3">
+                        <button onclick="resetSuperadminDateFilter()" class="px-4 py-2 rounded-xl text-xs font-bold text-slate-500 bg-slate-100 hover:bg-slate-200 transition-colors">
+                            Reset
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+<!-- Kad Ringkasan Statistik Berpecah -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+                <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between">
+                    <div>
+                        <p class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">SuperAdmin</p>
+                        <h3 id="stat-total-superadmins" class="font-serif text-2xl font-black text-brand-plum mt-1">0</h3>
+                    </div>
+                    <div class="w-10 h-10 rounded-xl bg-purple-50 text-brand-plum flex items-center justify-center text-lg font-bold">
+                        <i class="fa-solid fa-user-gear"></i>
+                    </div>
+                </div>
+
+<div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between">
+                    <div>
+                        <p class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Admin Biasa</p>
+                        <h3 id="stat-total-admins" class="font-serif text-2xl font-black text-brand-magenta mt-1">0</h3>
+                    </div>
+                    <div class="w-10 h-10 rounded-xl bg-pink-50 text-brand-magenta flex items-center justify-center text-lg font-bold">
+                        <i class="fa-solid fa-user-shield"></i>
+                    </div>
+                </div>
+
+<div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between">
+                    <div>
+                        <p class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Jumlah CL</p>
+                        <h3 id="stat-total-cl" class="font-serif text-2xl font-black text-brand-teal mt-1">0</h3>
+                    </div>
+                    <div class="w-10 h-10 rounded-xl bg-teal-50 text-brand-teal flex items-center justify-center text-lg font-bold">
+                        <i class="fa-solid fa-users"></i>
+                    </div>
+                </div>
+
+<div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between">
+                    <div>
+                        <p id="stat-order-label" class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Jumlah Order</p>
+                        <h3 id="stat-total-orders" class="font-serif text-2xl font-black text-amber-600 mt-1">0</h3>
+                    </div>
+                    <div class="w-10 h-10 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center text-lg font-bold">
+                        <i class="fa-solid fa-receipt"></i>
+                    </div>
+                </div>
+
+<div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between">
+                    <div>
+                        <p id="stat-komisen-label" class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Komisen CL</p>
+                        <h3 id="stat-total-komisen" class="font-serif text-lg font-black text-emerald-600 mt-1">RM 0.00</h3>
+                    </div>
+                    <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-lg font-bold">
+                        <i class="fa-solid fa-coins"></i>
+                    </div>
+                </div>
+            </div>
+
+<!-- Kad Tetapan Font Website -->
+            <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4">
+                <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+                    <h4 class="font-serif text-lg font-bold text-slate-800 flex items-center gap-2">
+                        <i class="fa-solid fa-font text-brand-plum"></i>
+                        <span>Tetapan Font Laman Web</span>
+                    </h4>
+                    <span class="text-[11px] bg-purple-50 text-brand-plum font-bold px-3 py-1 rounded-full">Kawalan Dinamik</span>
+                </div>
+                <form id="font-settings-form" onsubmit="handleSaveFontSettings(event)" class="grid grid-cols-1 sm:grid-cols-3 gap-4 items-end">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Font Tajuk / Heading (Serif)</label>
+                        <select id="setting-heading-font" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-brand-plum bg-slate-50">
+                            <option value="Playfair Display">Playfair Display (Asal)</option>
+                            <option value="Cormorant Garamond">Cormorant Garamond</option>
+                            <option value="Cinzel">Cinzel</option>
+                            <option value="Lora">Lora</option>
+                            <option value="Merriweather">Merriweather</option>
+                        </select>
+                    </div>
+
+<div>
+                        <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Font Teks / Body (Sans-Serif)</label>
+                        <select id="setting-body-font" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-brand-plum bg-slate-50">
+                            <option value="Plus Jakarta Sans">Plus Jakarta Sans (Asal)</option>
+                            <option value="Poppins">Poppins</option>
+                            <option value="Inter">Inter</option>
+                            <option value="Montserrat">Montserrat</option>
+                            <option value="Lato">Lato</option>
+                        </select>
+                    </div>
+
+<div>
+                        <button type="submit" id="btn-save-font" class="w-full bg-gradient-to-r from-brand-plum to-brand-teal text-white py-2.5 rounded-xl font-bold text-xs tracking-wider shadow-md hover:opacity-90 transition-all">
+                            Simpan Tetapan Font
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+<!-- SUB-TAB SWITCHER UNTUK DASHBOARD -->
+        <div class="flex items-center gap-2 border-b border-slate-200 pb-2">
+            <button id="tab-btn-primary" onclick="switchDashboardTab('primary')" class="px-5 py-2 rounded-full text-xs font-bold bg-brand-plum text-white transition-all">
+                Primary View
+            </button>
+            <button id="tab-btn-secondary" onclick="switchDashboardTab('secondary')" class="px-5 py-2 rounded-full text-xs font-bold bg-slate-200 text-slate-600 hover:bg-slate-300 transition-all">
+                Secondary View
+            </button>
+        </div>
+
+<!-- Jadual Dinamik -->
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+            <div class="p-6 border-b border-slate-100 flex items-center justify-between">
+                <h3 id="dashboard-table-title" class="font-serif text-xl font-bold text-slate-800 flex items-center gap-2">
+                    <i class="fa-solid fa-users text-brand-plum"></i> <span>Senarai Rekod</span>
+                </h3>
+                <span id="dashboard-count-badge" class="text-xs font-bold text-brand-teal bg-brand-tealLight px-3 py-1 rounded-full">0 Rekod</span>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse text-sm">
+                    <thead>
+                        <tr id="dashboard-table-header" class="bg-slate-50 text-slate-600 font-bold border-b border-slate-200 uppercase text-[11px] tracking-wider">
+                            <!-- Header dinamik -->
+                        </tr>
+                    </thead>
+                    <tbody id="dashboard-table-body" class="divide-y divide-slate-100 font-medium text-slate-700">
+                        <!-- Data dinamik -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ================= MODAL LOGIN ADMIN ================= -->
+<div id="admin-login-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 hidden backdrop-blur-sm transition-all animate-fadeIn">
+    <div class="bg-white rounded-[2rem] shadow-2xl max-w-md w-full overflow-hidden">
+        <div class="p-6 bg-gradient-to-r from-brand-plumDark to-brand-plum text-white text-center relative">
+            <button onclick="closeAdminLoginModal()" class="absolute top-4 right-4 w-8 h-8 rounded-full bg-white/20 hover:bg-white/30 text-white flex items-center justify-center transition-colors">
+                <i class="fa-solid fa-xmark text-sm"></i>
+            </button>
+            <div class="w-14 h-14 rounded-full bg-white/10 mx-auto flex items-center justify-center mb-2 border border-white/20">
+                <i class="fa-solid fa-user-shield text-2xl"></i>
+            </div>
+            <h3 class="font-serif text-2xl font-black tracking-wide">LOG MASUK ADMIN</h3>
+            <p class="text-xs text-purple-100 mt-1">Sila masukkan maklumat kredensial anda</p>
+        </div>
+        <form id="admin-login-form" onsubmit="handleAdminLogin(event)" class="p-6 space-y-4">
+            <div>
+                <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Username</label>
+                <div class="relative">
+                    <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-400">
+                        <i class="fa-solid fa-user text-xs"></i>
+                    </span>
+                    <input type="text" id="admin-username-input" required placeholder="Masukkan username" class="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-brand-plum focus:ring-1 focus:ring-brand-plum bg-slate-50/50">
+                </div>
+            </div>
+            <div>
+                <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Password</label>
+                <div class="relative">
+                    <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-400">
+                        <i class="fa-solid fa-lock text-xs"></i>
+                    </span>
+                    <input type="password" id="admin-password-input" required placeholder="Masukkan password" class="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-brand-plum focus:ring-1 focus:ring-brand-plum bg-slate-50/50">
+                </div>
+            </div>
+            <div class="pt-2">
+                <button type="submit" id="btn-login-submit" class="w-full bg-gradient-to-r from-brand-plum to-brand-teal text-white py-3.5 rounded-full font-bold text-xs tracking-wider shadow-lg hover:opacity-90 transition-all flex items-center justify-center gap-2">
+                    <span>LOG MASUK</span>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- ================= MODAL FORM ADMIN (FOR SUPERADMIN) ================= -->
+<div id="admin-form-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 hidden backdrop-blur-sm transition-all animate-fadeIn">
+    <div class="bg-white rounded-[2rem] shadow-2xl max-w-lg w-full overflow-hidden max-h-[90vh] flex flex-col">
+        <div class="p-6 bg-gradient-to-r from-brand-plum to-brand-teal text-white flex items-center justify-between">
+            <h3 id="admin-modal-title" class="font-serif text-xl font-bold uppercase tracking-wide">TAMBAH ADMIN BAHARU</h3>
+            <button onclick="closeAdminFormModal()" class="w-8 h-8 rounded-full bg-white/20 hover:bg-white/30 text-white flex items-center justify-center transition-colors">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+        </div>
+        <form id="admin-data-form" onsubmit="handleSaveAdmin(event)" class="p-6 overflow-y-auto space-y-4 custom-scrollbar">
+            <input type="hidden" id="admin-target-username">
+
+<div>
+                <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Nama Penuh</label>
+                <input type="text" id="form-name-input" required placeholder="Contoh: Nurul Huda" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-brand-plum bg-slate-50/50">
+            </div>
+
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Username</label>
+                    <input type="text" id="form-username-input" required placeholder="Contoh: admin_huda" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-brand-plum bg-slate-50/50">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Password</label>
+                    <input type="text" id="form-password-input" required placeholder="Contoh: pass123" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-brand-plum bg-slate-50/50">
+                </div>
+            </div>
+
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">No Telefon</label>
+                    <input type="text" id="form-phone-input" required placeholder="Contoh: 018-1234567" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-brand-plum bg-slate-50/50">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Peranan (Roles)</label>
+                    <select id="form-role-input" required class="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-brand-plum bg-slate-50/50">
+                        <option value="Admin">Admin</option>
+                        <option value="SuperAdmin">SuperAdmin</option>
+                    </select>
+                </div>
+            </div>
+
+<div class="pt-4 flex items-center justify-end gap-3 border-t border-slate-100">
+                <button type="button" onclick="closeAdminFormModal()" class="px-5 py-2.5 rounded-full text-xs font-bold text-slate-500 bg-slate-100 hover:bg-slate-200 transition-colors">
+                    Batal
+                </button>
+                <button type="submit" id="btn-admin-form-submit" class="px-6 py-2.5 rounded-full text-xs font-bold text-white bg-gradient-to-r from-brand-plum to-brand-teal shadow-md hover:opacity-90 transition-all flex items-center gap-2">
+                    <span>Simpan Admin</span>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- ================= MODAL FORM CL (FOR ADMIN) ================= -->
+<div id="cl-form-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 hidden backdrop-blur-sm transition-all animate-fadeIn">
+    <div class="bg-white rounded-[2rem] shadow-2xl max-w-lg w-full overflow-hidden max-h-[90vh] flex flex-col">
+        <div class="p-6 bg-gradient-to-r from-brand-plum to-brand-teal text-white flex items-center justify-between">
+            <h3 id="cl-modal-title" class="font-serif text-xl font-bold uppercase tracking-wide">TAMBAH CL BAHARU</h3>
+            <button onclick="closeClFormModal()" class="w-8 h-8 rounded-full bg-white/20 hover:bg-white/30 text-white flex items-center justify-center transition-colors">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+        </div>
+        <form id="cl-data-form" onsubmit="handleSaveCl(event)" class="p-6 overflow-y-auto space-y-4 custom-scrollbar">
+            <input type="hidden" id="cl-target-ic">
+
+<div>
+                <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Nama CL</label>
+                <input type="text" id="cl-nama-input" required placeholder="Contoh: Puan Noor" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-brand-plum bg-slate-50/50">
+            </div>
+
+<div>
+                <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Lokasi Cover</label>
+                <input type="text" id="cl-lokasi-input" required placeholder="Contoh: Shah Alam, Subang, PJ" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-brand-plum bg-slate-50/50">
+            </div>
+
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">No Telefon</label>
+                    <input type="text" id="cl-phone-input" required placeholder="Contoh: 018-1234567" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-brand-plum bg-slate-50/50">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">No IC (Sebagai ID Unik)</label>
+                    <input type="text" id="cl-ic-input" required placeholder="Contoh: 880512105234" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-brand-plum bg-slate-50/50">
+                </div>
+            </div>
+
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Rating Customer (1.0 - 5.0)</label>
+                    <input type="number" step="0.1" min="1" max="5" id="cl-rating-input" required placeholder="4.9" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-brand-plum bg-slate-50/50">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Jumlah Komisyen (RM)</label>
+                    <input type="number" step="0.01" id="cl-komisyen-input" required placeholder="1450.00" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-brand-plum bg-slate-50/50">
+                </div>
+            </div>
+
+<div class="pt-4 flex items-center justify-end gap-3 border-t border-slate-100">
+                <button type="button" onclick="closeClFormModal()" class="px-5 py-2.5 rounded-full text-xs font-bold text-slate-500 bg-slate-100 hover:bg-slate-200 transition-colors">
+                    Batal
+                </button>
+                <button type="submit" id="btn-cl-form-submit" class="px-6 py-2.5 rounded-full text-xs font-bold text-white bg-gradient-to-r from-brand-plum to-brand-teal shadow-md hover:opacity-90 transition-all flex items-center gap-2">
+                    <span>Simpan CL</span>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- ================= MODAL FORM ORDER ================= -->
+<div id="order-form-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 hidden backdrop-blur-sm transition-all animate-fadeIn">
+    <div class="bg-white rounded-[2rem] shadow-2xl max-w-lg w-full overflow-hidden max-h-[90vh] flex flex-col">
+        <div class="p-6 bg-gradient-to-r from-amber-600 to-yellow-500 text-white flex items-center justify-between">
+            <h3 id="order-modal-title" class="font-serif text-xl font-bold uppercase tracking-wide">TAMBAH ORDER BAHARU</h3>
+            <button onclick="closeOrderFormModal()" class="w-8 h-8 rounded-full bg-white/20 hover:bg-white/30 text-white flex items-center justify-center transition-colors">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+        </div>
+        <form id="order-data-form" onsubmit="handleSaveOrder(event)" class="p-6 overflow-y-auto space-y-4 custom-scrollbar">
+            <input type="hidden" id="order-target-id">
+
+<div>
+                <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Pilih Confinement Lady (CL)</label>
+                <select id="order-cl-select" required class="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-brand-plum bg-slate-50/50">
+                    <!-- Senarai CL dinamik -->
+                </select>
+            </div>
+
+<!-- Pilihan Pakej & Tempoh Pakej -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Pakej</label>
+                    <select id="order-pakej-select" onchange="updatePackageOptionsAndPrice()" required class="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-brand-plum bg-slate-50/50">
+                        <option value="Pakej Puteri">Pakej Puteri</option>
+                        <option value="Pakej Permaisuri">Pakej Permaisuri</option>
+                        <option value="Pakej Maharani">Pakej Maharani</option>
+                        <option value="Pakej Mahkota">Pakej Mahkota</option>
+                        <option value="Pakej Diraja">Pakej Diraja</option>
+                    </select>
+                </div>
+
+<div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Tempoh Pakej</label>
+                    <select id="order-tempoh-select" onchange="updatePackageOptionsAndPrice()" required class="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-brand-plum bg-slate-50/50">
+                        <!-- Tempoh dinamik -->
+                    </select>
+                </div>
+            </div>
+
+<!-- Harga Auto-Display & Komisen Manual -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Harga Pakej (RM)</label>
+                    <input type="number" step="0.01" id="order-harga-input" readonly required class="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm font-bold text-brand-plum bg-slate-100 cursor-not-allowed">
+                </div>
+
+<div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Komisen CL (RM) - Manual</label>
+                    <input type="number" step="0.01" min="0" id="order-komisyen-input" required placeholder="Contoh: 250.00" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm font-bold text-emerald-600 focus:outline-none focus:border-brand-plum bg-slate-50/50">
+                </div>
+            </div>
+
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Tarikh Mula</label>
+                    <input type="date" id="order-tarikh-input" required class="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-brand-plum bg-slate-50/50">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Masa Sesi</label>
+                    <input type="time" id="order-masa-input" required class="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-brand-plum bg-slate-50/50">
+                </div>
+            </div>
+
+<div class="pt-4 flex items-center justify-end gap-3 border-t border-slate-100">
+                <button type="button" onclick="closeOrderFormModal()" class="px-5 py-2.5 rounded-full text-xs font-bold text-slate-500 bg-slate-100 hover:bg-slate-200 transition-colors">
+                    Batal
+                </button>
+                <button type="submit" id="btn-order-form-submit" class="px-6 py-2.5 rounded-full text-xs font-bold text-white bg-gradient-to-r from-amber-600 to-yellow-500 shadow-md hover:opacity-90 transition-all flex items-center gap-2">
+                    <span>Simpan Order</span>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- ================= MODAL DIALOG PENGESAHAN (CONFIRMATION) ================= -->
+<div id="confirm-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 hidden backdrop-blur-sm transition-all animate-fadeIn">
+    <div class="bg-white rounded-3xl shadow-2xl max-w-sm w-full p-6 text-center space-y-4">
+        <div id="confirm-modal-icon" class="w-12 h-12 rounded-full bg-amber-100 text-amber-600 mx-auto flex items-center justify-center text-xl">
+            <i class="fa-solid fa-triangle-exclamation"></i>
+        </div>
+        <div>
+            <h4 id="confirm-modal-title" class="font-bold text-slate-800 text-lg">Pengesahan Tindakan</h4>
+            <p id="confirm-modal-message" class="text-xs text-slate-500 mt-1">Adakah anda pasti untuk meneruskan tindakan ini?</p>
+        </div>
+        <div class="flex items-center justify-center gap-3 pt-2">
+            <button onclick="closeConfirmModal(false)" class="w-full py-2.5 rounded-full text-xs font-bold text-slate-600 bg-slate-100 hover:bg-slate-200 transition-colors">
+                Batal
+            </button>
+            <button id="confirm-modal-btn-proceed" onclick="closeConfirmModal(true)" class="w-full py-2.5 rounded-full text-xs font-bold text-white bg-red-600 hover:bg-red-700 transition-colors shadow-sm">
+                Teruskan
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- SECTION HUBUNGI / PUBLIC CTA BANNER -->
 <section id="hubungi" class="relative bg-cover bg-center text-white overflow-hidden min-h-[250px] md:min-h-[220px] flex items-center" style="background-image: url('https://arleta.site/interactivelink/118/ctaback.webp');">
         <div class="absolute inset-0 bg-gradient-to-r from-brand-plumDark/85 via-[#764188]/70 to-[#127d7a]/85 z-0"></div>
 
@@ -1734,8 +2176,8 @@
                 </div>
 
 <div class="text-xs text-purple-200/90 font-medium">
-                    <p class="font-bold text-white text-sm">Syifa Confinement Care (PLT)</p>
-                    <p class="text-[11px] text-purple-200/70 mt-0.5">Postpartum Specialist Nilai / KL / Selangor</p>
+                    <p class="font-bold text-white text-sm">Syifa Niaga (PLT)</p>
+                    <p class="text-[11px] text-purple-200/70 mt-0.5">REG NO: 202504003636(LLP0045162-LGN)</p>
                 </div>
 
 <div class="text-xs text-purple-200/90 font-medium">
@@ -1749,13 +2191,13 @@
 <div class="flex flex-col items-center md:items-start gap-1">
                     <p class="text-purple-300 font-bold text-[10px] uppercase tracking-wider">Ikuti Kami</p>
                     <div class="flex gap-2">
-                        <a href="https://facebook.com" target="_blank" class="w-7 h-7 rounded-full bg-white text-brand-plumDark flex items-center justify-center hover:opacity-90 transition-opacity">
+                        <a href="https://www.facebook.com/share/16k9kqkujE/" target="_blank" class="w-7 h-7 rounded-full bg-white text-brand-plumDark flex items-center justify-center hover:opacity-90 transition-opacity">
                             <i class="fab fa-facebook-f text-xs"></i>
                         </a>
-                        <a href="https://instagram.com" target="_blank" class="w-7 h-7 rounded-full bg-white text-brand-plumDark flex items-center justify-center hover:opacity-90 transition-opacity">
+                        <a href="https://www.instagram.com/syifaconfinement" target="_blank" class="w-7 h-7 rounded-full bg-white text-brand-plumDark flex items-center justify-center hover:opacity-90 transition-opacity">
                             <i class="fab fa-instagram text-xs"></i>
                         </a>
-                        <a href="https://tiktok.com" target="_blank" class="w-7 h-7 rounded-full bg-white text-brand-plumDark flex items-center justify-center hover:opacity-90 transition-opacity">
+                        <a href="https://www.tiktok.com/@syifaconfinementcare" target="_blank" class="w-7 h-7 rounded-full bg-white text-brand-plumDark flex items-center justify-center hover:opacity-90 transition-opacity">
                             <i class="fab fa-tiktok text-xs"></i>
                         </a>
                     </div>
@@ -1764,122 +2206,1114 @@
         </div>
     </footer>
 
-<!-- FLOAT WA BUTTON -->
-    <a href="https://wa.me/60184619099?text=Hi%20Syifa%20Care,%20saya%20berminat%20dengan%2520rawatan%2520pantang." target="_blank" class="fixed bottom-6 right-6 z-50 bg-[#25D366] text-white p-4 rounded-full shadow-2xl hover:bg-[#20ba5a] transition-all transform hover:scale-110 flex items-center justify-center" aria-label="Hubungi kami melalui WhatsApp">
-        <i class="fab fa-whatsapp text-3xl"></i>
-    </a>
-
 <script>
+        // URL WEB APP GOOGLE APPS SCRIPT
+        const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwa7BZ_BShngyuW6FHz8wGHzpgL5BJjyZ4SDUHbywva7IVp2AFTG4D1-DzwaLuMo8Ra/exec";
+
+        const PACKAGE_PRICE_MAP = {
+            "Pakej Puteri": { "3 Hari": 440, "5 Hari": 680, "7 Hari": 880, "14 Hari": 1750, "21 Hari": 2500, "30 Hari": 3500 },
+            "Pakej Permaisuri": { "3 Hari": 480, "5 Hari": 750, "7 Hari": 990, "14 Hari": 1890, "21 Hari": 2750, "30 Hari": 3850 },
+            "Pakej Maharani": { "3 Hari": 590, "5 Hari": 990, "7 Hari": 1390, "14 Hari": 2740, "21 Hari": 4150, "30 Hari": 5850 },
+            "Pakej Mahkota": { "7 Hari": 2150, "14 Hari": 3550, "21 Hari": 4850, "30 Hari": 6580 },
+            "Pakej Diraja": { "7 Hari": 2450, "14 Hari": 3850, "21 Hari": 5150, "30 Hari": 6880, "44 Hari": 9150 }
+        };
+
         const menuBtn = document.getElementById('mobile-menu-btn');
         const mobileMenu = document.getElementById('mobile-menu');
 
-        menuBtn.addEventListener('click', () => {
-            mobileMenu.classList.toggle('hidden');
-        });
+        menuBtn.addEventListener('click', () => { mobileMenu.classList.toggle('hidden'); });
 
         const mobileLinks = mobileMenu.querySelectorAll('a');
         mobileLinks.forEach(link => {
-            link.addEventListener('click', () => {
-                mobileMenu.classList.add('hidden');
-            });
+            link.addEventListener('click', () => { mobileMenu.classList.add('hidden'); });
         });
 
-        // ================= FUNGSI CONTROL PAGE SPA BARU =================
+        function isUserSuperAdmin(roleString) {
+            return String(roleString || "").toLowerCase().trim() === "superadmin";
+        }
+
+        // Helper Format Link WhatsApp
+        function formatWhatsAppUrl(phoneStr) {
+            if (!phoneStr) return null;
+            let clean = String(phoneStr).replace(/\D/g, '');
+            if (!clean) return null;
+            if (clean.startsWith('0')) {
+                clean = '60' + clean.slice(1);
+            } else if (!clean.startsWith('60') && clean.length >= 9) {
+                clean = '60' + clean;
+            }
+            return `https://wa.me/${clean}`;
+        }
+
+        // Format Date ke DD/MM/YYYY
+        function formatDisplayDate(rawDate) {
+            if (!rawDate) return '-';
+            let str = String(rawDate).trim();
+
+            if (str.includes('GMT') || str.includes('T')) {
+                const d = new Date(str);
+                if (!isNaN(d.getTime())) {
+                    const day = String(d.getDate()).padStart(2, '0');
+                    const month = String(d.getMonth() + 1).padStart(2, '0');
+                    const year = d.getFullYear();
+                    return `${day}/${month}/${year}`;
+                }
+            }
+
+            if (str.match(/^\d{4}-\d{2}-\d{2}$/)) {
+                const parts = str.split('-');
+                return `${parts[2]}/${parts[1]}/${parts[0]}`;
+            }
+
+            return str;
+        }
+
+        // Format Time ke 09:00AM
+        function formatDisplayTime(rawTime) {
+            if (!rawTime) return '-';
+            let str = String(rawTime).trim();
+
+            if (str.includes('GMT') || str.includes('1899')) {
+                const d = new Date(str);
+                if (!isNaN(d.getTime())) {
+                    let hours = d.getHours();
+                    const minutes = String(d.getMinutes()).padStart(2, '0');
+                    const ampm = hours >= 12 ? 'PM' : 'AM';
+                    hours = hours % 12;
+                    hours = hours ? hours : 12;
+                    return `${String(hours).padStart(2, '0')}:${minutes}${ampm}`;
+                }
+            }
+
+            if (str.match(/^\d{1,2}:\d{2}/)) {
+                const parts = str.split(':');
+                let hours = parseInt(parts[0], 10);
+                const minutes = parts[1].substring(0, 2);
+                const ampm = hours >= 12 ? 'PM' : 'AM';
+                hours = hours % 12;
+                hours = hours ? hours : 12;
+                return `${String(hours).padStart(2, '0')}:${minutes}${ampm}`;
+            }
+
+            return str;
+        }
+
+        // Pengendali Kawalan Validation Julat Tarikh Mula & Akhir
+        function handleDateFilterChange(changedInputType) {
+            const startInput = document.getElementById('superadmin-start-date');
+            const endInput = document.getElementById('superadmin-end-date');
+
+            const startVal = startInput.value;
+            const endVal = endInput.value;
+
+            if (startVal && endVal) {
+                if (startVal > endVal) {
+                    alert("Ralat: Tarikh Mula tidak boleh melebihi Tarikh Akhir!");
+                    if (changedInputType === 'start') {
+                        startInput.value = endVal;
+                    } else {
+                        endInput.value = startVal;
+                    }
+                }
+            }
+
+            if (startInput.value) {
+                endInput.min = startInput.value;
+            } else {
+                endInput.removeAttribute('min');
+            }
+
+            if (endInput.value) {
+                startInput.max = endInput.value;
+            } else {
+                startInput.removeAttribute('max');
+            }
+
+            renderCurrentDashboardTable();
+        }
+
+        function isOrderInCustomDateRange(item, startDateStr, endDateStr) {
+            if (!startDateStr && !endDateStr) return true;
+
+            let dateVal = item.createdAt || item.tarikh;
+            if (!dateVal) return true;
+
+            let orderDate = null;
+
+            if (dateVal.includes('/')) {
+                const datePart = dateVal.split(',')[0].trim();
+                const p = datePart.split('/');
+                if (p.length === 3) orderDate = new Date(`${p[2]}-${p[1]}-${p[0]}`);
+            } else if (dateVal.match(/^\d{4}-\d{2}-\d{2}$/)) {
+                orderDate = new Date(dateVal);
+            } else {
+                orderDate = new Date(dateVal);
+            }
+
+            if (!orderDate || isNaN(orderDate.getTime())) return true;
+
+            orderDate.setHours(0, 0, 0, 0);
+
+            if (startDateStr) {
+                const startD = new Date(startDateStr);
+                startD.setHours(0, 0, 0, 0);
+                if (orderDate < startD) return false;
+            }
+
+            if (endDateStr) {
+                const endD = new Date(endDateStr);
+                endD.setHours(23, 59, 59, 999);
+                if (orderDate > endD) return false;
+            }
+
+            return true;
+        }
+
+        function resetSuperadminDateFilter() {
+            const startInput = document.getElementById('superadmin-start-date');
+            const endInput = document.getElementById('superadmin-end-date');
+            startInput.value = '';
+            endInput.value = '';
+            startInput.removeAttribute('max');
+            endInput.removeAttribute('min');
+            renderCurrentDashboardTable();
+        }
+
+        function applyDynamicFonts(headingFont, bodyFont) {
+            const customStyle = document.getElementById('custom-font-style');
+            if (!customStyle) return;
+
+            const hFont = headingFont || "Playfair Display";
+            const bFont = bodyFont || "Plus Jakarta Sans";
+
+            customStyle.innerHTML = `
+                html { scroll-behavior: smooth; }
+                .text-shadow-sm { text-shadow: 1px 1px 2px rgba(0,0,0,0.1); }
+                .blob-border { border-radius: 43% 57% 53% 47% / 51% 43% 57% 49%; }
+                .pkg-card { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+                .pkg-card:hover { transform: translateY(-8px); box-shadow: 0 20px 25px -5px rgba(114, 47, 95, 0.1), 0 10px 10px -5px rgba(114, 47, 95, 0.04); }
+                .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+                .custom-scrollbar::-webkit-scrollbar-track { background: #FBF5FA; }
+                .custom-scrollbar::-webkit-scrollbar-thumb { background: #722F5F; border-radius: 10px; }
+                
+                .font-serif, h1, h2, h3, h4 { font-family: '${hFont}', serif !important; }
+                body, .font-sans { font-family: '${bFont}', sans-serif !important; }
+            `;
+        }
+
+        function updatePackageOptionsAndPrice() {
+            const pakejSelect = document.getElementById('order-pakej-select');
+            const tempohSelect = document.getElementById('order-tempoh-select');
+            const hargaInput = document.getElementById('order-harga-input');
+
+            const selectedPakej = pakejSelect.value;
+            const availableDurations = PACKAGE_PRICE_MAP[selectedPakej] || {};
+
+            const currentSelectedTempoh = tempohSelect.value;
+            tempohSelect.innerHTML = '';
+
+            Object.keys(availableDurations).forEach(duration => {
+                const opt = document.createElement('option');
+                opt.value = duration;
+                opt.innerText = duration;
+                if (duration === currentSelectedTempoh) opt.selected = true;
+                tempohSelect.appendChild(opt);
+            });
+
+            const finalTempoh = tempohSelect.value;
+            const finalPrice = availableDurations[finalTempoh] || 0;
+            hargaInput.value = finalPrice.toFixed(2);
+        }
+
+        // ================= FUNGSI CONTROL PAGE SPA =================
         function showPage(pageName) {
             const mainContent = document.getElementById('main-content');
             const kursusPage = document.getElementById('kursus-page');
             const clPage = document.getElementById('cl-page');
+            const adminDashboard = document.getElementById('admin-dashboard-page');
+
+            mainContent.classList.add('hidden');
+            kursusPage.classList.add('hidden');
+            clPage.classList.add('hidden');
+            adminDashboard.classList.add('hidden');
 
             if (pageName === 'main') {
                 mainContent.classList.remove('hidden');
-                kursusPage.classList.add('hidden');
-                clPage.classList.add('hidden');
             } else if (pageName === 'kursus') {
-                mainContent.classList.add('hidden');
                 kursusPage.classList.remove('hidden');
-                clPage.classList.add('hidden');
                 window.scrollTo({ top: 0, behavior: 'smooth' });
             } else if (pageName === 'cl') {
-                mainContent.classList.add('hidden');
-                kursusPage.classList.add('hidden');
                 clPage.classList.remove('hidden');
                 window.scrollTo({ top: 0, behavior: 'smooth' });
+            } else if (pageName === 'admin') {
+                adminDashboard.classList.remove('hidden');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+                fetchAndRenderDashboardTable();
             }
         }
 
-        // Modal Functions for Puteri Package
-        function openPuteriModal() {
-            document.getElementById('puteri-modal').classList.remove('hidden');
-            document.body.style.overflow = 'hidden'; 
-        }
-        function closePuteriModal() {
-            document.getElementById('puteri-modal').classList.add('hidden');
-            document.body.style.overflow = ''; 
-        }
+        function openPuteriModal() { document.getElementById('puteri-modal').classList.remove('hidden'); document.body.style.overflow = 'hidden'; }
+        function closePuteriModal() { document.getElementById('puteri-modal').classList.add('hidden'); document.body.style.overflow = ''; }
 
-        // Modal Functions for Permaisuri Package
-        function openPermaisuriModal() {
-            document.getElementById('permaisuri-modal').classList.remove('hidden');
-            document.body.style.overflow = 'hidden';
-        }
-        function closePermaisuriModal() {
-            document.getElementById('permaisuri-modal').classList.add('hidden');
-            document.body.style.overflow = '';
-        }
+        function openPermaisuriModal() { document.getElementById('permaisuri-modal').classList.remove('hidden'); document.body.style.overflow = 'hidden'; }
+        function closePermaisuriModal() { document.getElementById('permaisuri-modal').classList.add('hidden'); document.body.style.overflow = ''; }
 
-        // Modal Functions for Maharani Package
-        function openMaharaniModal() {
-            document.getElementById('maharani-modal').classList.remove('hidden');
-            document.body.style.overflow = 'hidden';
-        }
-        function closeMaharaniModal() {
-            document.getElementById('maharani-modal').classList.add('hidden');
-            document.body.style.overflow = '';
-        }
+        function openMaharaniModal() { document.getElementById('maharani-modal').classList.remove('hidden'); document.body.style.overflow = 'hidden'; }
+        function closeMaharaniModal() { document.getElementById('maharani-modal').classList.add('hidden'); document.body.style.overflow = ''; }
 
-        // Modal Functions for Mahkota Package
-        function openMahkotaModal() {
-            document.getElementById('mahkota-modal').classList.remove('hidden');
-            document.body.style.overflow = 'hidden';
-        }
-        function closeMahkotaModal() {
-            document.getElementById('mahkota-modal').classList.add('hidden');
-            document.body.style.overflow = '';
-        }
+        function openMahkotaModal() { document.getElementById('mahkota-modal').classList.remove('hidden'); document.body.style.overflow = 'hidden'; }
+        function closeMahkotaModal() { document.getElementById('mahkota-modal').classList.add('hidden'); document.body.style.overflow = ''; }
 
-        // Modal Functions for Diraja Package (BARU)
-        function openDirajaModal() {
-            document.getElementById('diraja-modal').classList.remove('hidden');
-            document.body.style.overflow = 'hidden';
-        }
-        function closeDirajaModal() {
-            document.getElementById('diraja-modal').classList.add('hidden');
-            document.body.style.overflow = '';
-        }
+        function openDirajaModal() { document.getElementById('diraja-modal').classList.remove('hidden'); document.body.style.overflow = 'hidden'; }
+        function closeDirajaModal() { document.getElementById('diraja-modal').classList.add('hidden'); document.body.style.overflow = ''; }
 
-        // Close modals when click outside window boxes
         window.onclick = function(event) {
-            const puteriModal = document.getElementById('puteri-modal');
-            const permaisuriModal = document.getElementById('permaisuri-modal');
-            const maharaniModal = document.getElementById('maharani-modal');
-            const mahkotaModal = document.getElementById('mahkota-modal');
-            const dirajaModal = document.getElementById('diraja-modal');
-            if (event.target == puteriModal) {
-                closePuteriModal();
-            }
-            if (event.target == permaisuriModal) {
-                closePermaisuriModal();
-            }
-            if (event.target == maharaniModal) {
-                closeMaharaniModal();
-            }
-            if (event.target == mahkotaModal) {
-                closeMahkotaModal();
-            }
-            if (event.target == dirajaModal) {
-                closeDirajaModal();
+            if (event.target == document.getElementById('puteri-modal')) closePuteriModal();
+            if (event.target == document.getElementById('permaisuri-modal')) closePermaisuriModal();
+            if (event.target == document.getElementById('maharani-modal')) closeMaharaniModal();
+            if (event.target == document.getElementById('mahkota-modal')) closeMahkotaModal();
+            if (event.target == document.getElementById('diraja-modal')) closeDirajaModal();
+            if (event.target == document.getElementById('admin-login-modal')) closeAdminLoginModal();
+            if (event.target == document.getElementById('admin-form-modal')) closeAdminFormModal();
+            if (event.target == document.getElementById('cl-form-modal')) closeClFormModal();
+            if (event.target == document.getElementById('order-form-modal')) closeOrderFormModal();
+        }
+
+        // ================= LOGIK INTEGRASI APPS SCRIPT =================
+
+        let cachedAdminData = [];
+        let cachedClData = [];
+        let cachedOrdersData = [];
+        let currentSubTab = "primary";
+        let onConfirmAction = null;
+
+        function updateNavState() {
+            const currentAdmin = localStorage.getItem('syifa_admin_logged_in');
+            const currentAdminName = localStorage.getItem('syifa_admin_name') || currentAdmin;
+            const currentRole = localStorage.getItem('syifa_admin_role') || "Admin";
+            
+            const publicNav = document.getElementById('public-nav');
+            const publicCta = document.getElementById('public-cta');
+            const adminNav = document.getElementById('admin-nav');
+            const welcomeText = document.getElementById('admin-welcome-text');
+            const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+            const mobileMenu = document.getElementById('mobile-menu');
+            const hubungiSection = document.getElementById('hubungi');
+
+            const btnAddAdmin = document.getElementById('btn-nav-add-admin');
+            const btnAddCl = document.getElementById('btn-nav-add-cl');
+            const btnAddOrder = document.getElementById('btn-nav-add-order');
+
+            if (currentAdmin) {
+                if (publicNav) publicNav.style.display = 'none';
+                if (publicCta) publicCta.style.display = 'none';
+                if (mobileMenuBtn) mobileMenuBtn.style.display = 'none';
+                if (mobileMenu) mobileMenu.style.display = 'none';
+                if (hubungiSection) hubungiSection.style.display = 'none';
+                
+                if (adminNav) adminNav.style.display = 'flex';
+                if (welcomeText) {
+                    welcomeText.innerText = `Selamat Datang Admin ${currentAdminName} (${currentRole})`;
+                    welcomeText.style.display = 'inline-block';
+                }
+
+                if (isUserSuperAdmin(currentRole)) {
+                    if (btnAddAdmin) btnAddAdmin.style.display = 'inline-flex';
+                    if (btnAddCl) btnAddCl.style.display = 'none';
+                    if (btnAddOrder) btnAddOrder.style.display = 'none';
+                } else {
+                    if (btnAddAdmin) btnAddAdmin.style.display = 'none';
+                    if (btnAddCl) btnAddCl.style.display = 'inline-flex';
+                    if (btnAddOrder) btnAddOrder.style.display = 'inline-flex';
+                }
+
+            } else {
+                if (publicNav) publicNav.style.display = '';
+                if (publicCta) publicCta.style.display = '';
+                if (mobileMenuBtn) mobileMenuBtn.style.display = '';
+                if (mobileMenu) mobileMenu.style.display = '';
+                if (hubungiSection) hubungiSection.style.display = '';
+
+                if (adminNav) adminNav.style.display = 'none';
+                if (welcomeText) welcomeText.style.display = 'none';
             }
         }
+
+        function postToAppsScript(payload) {
+            return fetch(APPS_SCRIPT_URL, {
+                method: "POST",
+                headers: { "Content-Type": "text/plain" },
+                body: JSON.stringify(payload)
+            })
+            .then(res => res.text())
+            .then(text => JSON.parse(text));
+        }
+
+        function fetchDataFromSheet() {
+            return fetch(APPS_SCRIPT_URL)
+                .then(res => res.text())
+                .then(text => JSON.parse(text));
+        }
+
+        function handleAdminNavClick() {
+            const currentAdmin = localStorage.getItem('syifa_admin_logged_in');
+            if (currentAdmin) {
+                updateNavState();
+                showPage('admin');
+            } else {
+                openAdminLoginModal();
+            }
+        }
+
+        function openAdminLoginModal() {
+            document.getElementById('admin-login-modal').classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeAdminLoginModal() {
+            document.getElementById('admin-login-modal').classList.add('hidden');
+            document.body.style.overflow = '';
+        }
+
+        function handleAdminLogin(e) {
+            e.preventDefault();
+            const usernameInput = document.getElementById('admin-username-input').value.trim();
+            const passwordInput = document.getElementById('admin-password-input').value.trim();
+
+            const submitBtn = document.getElementById('btn-login-submit');
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> <span>MENYEMAK...</span>`;
+
+            fetchDataFromSheet()
+                .then(result => {
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = `<span>LOG MASUK</span>`;
+
+                    if (result.success) {
+                        cachedAdminData = result.admins || [];
+                        cachedClData = result.cl || [];
+                        cachedOrdersData = result.orders || [];
+                        
+                        const foundAdmin = cachedAdminData.find(a => 
+                            String(a.username).trim() === usernameInput && 
+                            String(a.password).trim() === passwordInput
+                        );
+
+                        if (foundAdmin) {
+                            localStorage.setItem('syifa_admin_logged_in', foundAdmin.username);
+                            localStorage.setItem('syifa_admin_name', foundAdmin.name || foundAdmin.username);
+                            localStorage.setItem('syifa_admin_role', foundAdmin.role || "Admin");
+                            
+                            closeAdminLoginModal();
+                            updateNavState();
+                            showPage('admin');
+                            
+                            document.getElementById('admin-username-input').value = '';
+                            document.getElementById('admin-password-input').value = '';
+                        } else {
+                            alert('Username atau Password tidak sah!');
+                        }
+                    } else {
+                        alert('Gagal membaca data dari Google Sheet: ' + (result.error || 'Ralat tidak diketahui'));
+                    }
+                })
+                .catch(err => {
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = `<span>LOG MASUK</span>`;
+                    alert('Ralat Rangkaian: ' + err.message);
+                });
+        }
+
+        function handleAdminLogout() {
+            showConfirmation("Log Keluar", "Adakah anda pasti untuk log keluar dari sistem Admin?", () => {
+                localStorage.removeItem('syifa_admin_logged_in');
+                localStorage.removeItem('syifa_admin_name');
+                localStorage.removeItem('syifa_admin_role');
+                updateNavState();
+                showPage('main');
+            });
+        }
+
+        function switchDashboardTab(tabType) {
+            currentSubTab = tabType;
+            const primaryBtn = document.getElementById('tab-btn-primary');
+            const secondaryBtn = document.getElementById('tab-btn-secondary');
+
+            if (tabType === 'primary') {
+                primaryBtn.className = "px-5 py-2 rounded-full text-xs font-bold bg-brand-plum text-white transition-all";
+                secondaryBtn.className = "px-5 py-2 rounded-full text-xs font-bold bg-slate-200 text-slate-600 hover:bg-slate-300 transition-all";
+            } else {
+                primaryBtn.className = "px-5 py-2 rounded-full text-xs font-bold bg-slate-200 text-slate-600 hover:bg-slate-300 transition-all";
+                secondaryBtn.className = "px-5 py-2 rounded-full text-xs font-bold bg-brand-plum text-white transition-all";
+            }
+
+            renderCurrentDashboardTable();
+        }
+
+        function fetchAndRenderDashboardTable() {
+            const tbody = document.getElementById('dashboard-table-body');
+            tbody.innerHTML = `<tr><td colspan="9" class="p-6 text-center text-slate-400 italic"><i class="fa-solid fa-spinner fa-spin mr-2"></i>Memuat turun data dari Google Sheet...</td></tr>`;
+
+            fetchDataFromSheet()
+                .then(result => {
+                    if (result.success) {
+                        cachedAdminData = result.admins || [];
+                        cachedClData = result.cl || [];
+                        cachedOrdersData = result.orders || [];
+                        const settings = result.settings || {};
+
+                        applyDynamicFonts(settings.heading_font, settings.body_font);
+
+                        const currentRole = localStorage.getItem('syifa_admin_role') || "Admin";
+                        const isSuper = isUserSuperAdmin(currentRole);
+                        const superSection = document.getElementById('superadmin-top-section');
+
+                        if (isSuper && superSection) {
+                            superSection.style.display = 'block';
+
+                            const countSuperAdmins = cachedAdminData.filter(a => isUserSuperAdmin(a.role)).length;
+                            const countNormalAdmins = cachedAdminData.filter(a => !isUserSuperAdmin(a.role)).length;
+
+                            document.getElementById('stat-total-superadmins').innerText = countSuperAdmins;
+                            document.getElementById('stat-total-admins').innerText = countNormalAdmins;
+                            document.getElementById('stat-total-cl').innerText = cachedClData.length;
+
+                            document.getElementById('setting-heading-font').value = settings.heading_font || "Playfair Display";
+                            document.getElementById('setting-body-font').value = settings.body_font || "Plus Jakarta Sans";
+                        } else if (superSection) {
+                            superSection.style.display = 'none';
+                        }
+
+                        renderCurrentDashboardTable();
+                    } else {
+                        tbody.innerHTML = `<tr><td colspan="9" class="p-6 text-center text-red-500 italic">Ralat: ${result.error}</td></tr>`;
+                    }
+                })
+                .catch(err => {
+                    tbody.innerHTML = `<tr><td colspan="9" class="p-6 text-center text-red-500 italic">Gagal menyambung ke Google Sheet. (${err.message})</td></tr>`;
+                });
+        }
+
+        function renderCurrentDashboardTable() {
+            const currentRole = localStorage.getItem('syifa_admin_role') || "Admin";
+            const isSuper = isUserSuperAdmin(currentRole);
+
+            const primaryBtn = document.getElementById('tab-btn-primary');
+            const secondaryBtn = document.getElementById('tab-btn-secondary');
+            const tableTitle = document.getElementById('dashboard-table-title');
+            const countBadge = document.getElementById('dashboard-count-badge');
+            const thead = document.getElementById('dashboard-table-header');
+            const tbody = document.getElementById('dashboard-table-body');
+
+            const startDate = isSuper ? document.getElementById('superadmin-start-date')?.value : '';
+            const endDate = isSuper ? document.getElementById('superadmin-end-date')?.value : '';
+
+            const filteredOrders = cachedOrdersData.filter(o => isOrderInCustomDateRange(o, startDate, endDate));
+
+            if (isSuper) {
+                document.getElementById('stat-total-orders').innerText = filteredOrders.length;
+                const totalKomisen = filteredOrders.reduce((sum, item) => sum + parseFloat(item.komisyen || 0), 0);
+                document.getElementById('stat-total-komisen').innerText = `RM ${totalKomisen.toLocaleString('ms-MY', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+
+                let rangeText = "Keseluruhan";
+                if (startDate && endDate) rangeText = `${formatDisplayDate(startDate)} - ${formatDisplayDate(endDate)}`;
+                else if (startDate) rangeText = `Sejak ${formatDisplayDate(startDate)}`;
+                else if (endDate) rangeText = `Hingga ${formatDisplayDate(endDate)}`;
+
+                document.getElementById('stat-order-label').innerText = `Order (${rangeText})`;
+                document.getElementById('stat-komisen-label').innerText = `Komisen (${rangeText})`;
+            }
+
+            tbody.innerHTML = '';
+
+            if (isSuper) {
+                primaryBtn.innerText = "Senarai Pengguna Admin";
+                secondaryBtn.innerText = "Senarai Keseluruhan Order";
+
+                if (currentSubTab === 'primary') {
+                    tableTitle.innerHTML = `<i class="fa-solid fa-user-shield text-brand-plum"></i> <span>Senarai Pengguna Admin</span>`;
+                    countBadge.innerText = `${cachedAdminData.length} Admin`;
+
+                    thead.innerHTML = `
+                        <th class="p-4 text-center">Bil.</th>
+                        <th class="p-4">Nama</th>
+                        <th class="p-4">Username</th>
+                        <th class="p-4">No Telefon</th>
+                        <th class="p-4">Peranan</th>
+                        <th class="p-4">Password</th>
+                        <th class="p-4 text-center">Tindakan</th>
+                    `;
+
+                    if (cachedAdminData.length === 0) {
+                        tbody.innerHTML = `<tr><td colspan="7" class="p-6 text-center text-slate-400 italic">Tiada rekod Admin.</td></tr>`;
+                        return;
+                    }
+
+                    cachedAdminData.forEach((item, index) => {
+                        const tr = document.createElement('tr');
+                        tr.className = "hover:bg-slate-50 transition-colors";
+                        const isSuperRole = isUserSuperAdmin(item.role);
+                        const roleBadgeClass = isSuperRole ? "bg-purple-100 text-brand-plum" : "bg-pink-100 text-brand-magenta";
+                        const waUrl = formatWhatsAppUrl(item.phone);
+
+                        tr.innerHTML = `
+                            <td class="p-4 text-center font-bold text-slate-400">${index + 1}</td>
+                            <td class="p-4 font-bold text-brand-plum">${item.name || '-'}</td>
+                            <td class="p-4 font-mono text-xs text-slate-600">${item.username}</td>
+                            <td class="p-4">
+                                ${item.phone && waUrl ? `<a href="${waUrl}" target="_blank" class="inline-flex items-center gap-1.5 text-emerald-600 hover:text-emerald-700 font-bold hover:underline" title="Klik untuk mesej WhatsApp"><i class="fab fa-whatsapp text-sm"></i> ${item.phone}</a>` : (item.phone || '-')}
+                            </td>
+                            <td class="p-4"><span class="${roleBadgeClass} font-bold text-xs px-2.5 py-1 rounded-full">${item.role || 'Admin'}</span></td>
+                            <td class="p-4 font-mono text-xs text-slate-400">••••••••</td>
+                            <td class="p-4 text-center">
+                                <div class="flex items-center justify-center gap-2">
+                                    <button onclick="openEditAdminModal('${item.username}')" class="w-8 h-8 rounded-lg bg-purple-50 text-brand-plum hover:bg-brand-plum hover:text-white transition-all flex items-center justify-center"><i class="fa-solid fa-pen-to-square text-xs"></i></button>
+                                    <button onclick="handleDeleteAdmin('${item.username}')" class="w-8 h-8 rounded-lg bg-red-50 text-red-600 hover:bg-red-600 hover:text-white transition-all flex items-center justify-center"><i class="fa-solid fa-trash-can text-xs"></i></button>
+                                </div>
+                            </td>
+                        `;
+                        tbody.appendChild(tr);
+                    });
+                } else {
+                    renderOrderTable(tableTitle, countBadge, thead, tbody, filteredOrders);
+                }
+            } else {
+                primaryBtn.innerText = "Senarai CL";
+                secondaryBtn.innerText = "Pengurusan Order";
+
+                if (currentSubTab === 'primary') {
+                    tableTitle.innerHTML = `<i class="fa-solid fa-users text-brand-teal"></i> <span>Senarai Confinement Lady (CL)</span>`;
+                    countBadge.innerText = `${cachedClData.length} CL Berdaftar`;
+
+                    thead.innerHTML = `
+                        <th class="p-4 text-center">Bil.</th>
+                        <th class="p-4">Nama CL</th>
+                        <th class="p-4">Lokasi Cover</th>
+                        <th class="p-4">No Telefon</th>
+                        <th class="p-4">No IC (ID)</th>
+                        <th class="p-4 text-center">Rating</th>
+                        <th class="p-4 text-right">Jumlah Komisyen</th>
+                        <th class="p-4 text-center">Tindakan</th>
+                    `;
+
+                    if (cachedClData.length === 0) {
+                        tbody.innerHTML = `<tr><td colspan="8" class="p-6 text-center text-slate-400 italic">Tiada rekod CL ditemui.</td></tr>`;
+                        return;
+                    }
+
+                    cachedClData.forEach((item, index) => {
+                        const tr = document.createElement('tr');
+                        tr.className = "hover:bg-slate-50 transition-colors";
+                        const waUrl = formatWhatsAppUrl(item.phone);
+
+                        tr.innerHTML = `
+                            <td class="p-4 text-center font-bold text-slate-400">${index + 1}</td>
+                            <td class="p-4 font-bold text-brand-plum">${item.nama || '-'}</td>
+                            <td class="p-4">${item.lokasi || '-'}</td>
+                            <td class="p-4">
+                                ${item.phone && waUrl ? `<a href="${waUrl}" target="_blank" class="inline-flex items-center gap-1.5 text-emerald-600 hover:text-emerald-700 font-bold hover:underline" title="Klik untuk mesej WhatsApp"><i class="fab fa-whatsapp text-sm"></i> ${item.phone}</a>` : (item.phone || '-')}
+                            </td>
+                            <td class="p-4 font-mono text-xs text-slate-600">${item.ic || '-'}</td>
+                            <td class="p-4 text-center"><span class="inline-flex items-center gap-1 bg-amber-50 text-amber-700 px-2.5 py-1 rounded-full text-xs font-bold border border-amber-200"><i class="fa-solid fa-star text-amber-400"></i> ${parseFloat(item.rating || 5).toFixed(1)}</span></td>
+                            <td class="p-4 text-right font-black text-brand-teal">RM ${parseFloat(item.komisyen || 0).toLocaleString('ms-MY', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+                            <td class="p-4 text-center">
+                                <div class="flex items-center justify-center gap-2">
+                                    <button onclick="openEditClModal('${item.ic}')" class="w-8 h-8 rounded-lg bg-purple-50 text-brand-plum hover:bg-brand-plum hover:text-white transition-all flex items-center justify-center"><i class="fa-solid fa-pen-to-square text-xs"></i></button>
+                                    <button onclick="handleDeleteCl('${item.ic}')" class="w-8 h-8 rounded-lg bg-red-50 text-red-600 hover:bg-red-600 hover:text-white transition-all flex items-center justify-center"><i class="fa-solid fa-trash-can text-xs"></i></button>
+                                </div>
+                            </td>
+                        `;
+                        tbody.appendChild(tr);
+                    });
+                } else {
+                    renderOrderTable(tableTitle, countBadge, thead, tbody, cachedOrdersData);
+                }
+            }
+        }
+
+        function renderOrderTable(tableTitle, countBadge, thead, tbody, ordersToDisplay) {
+            tableTitle.innerHTML = `<i class="fa-solid fa-receipt text-amber-600"></i> <span>Senarai Order Tempahan</span>`;
+            countBadge.innerText = `${ordersToDisplay.length} Tempahan`;
+
+            thead.innerHTML = `
+                <th class="p-4 text-center">Bil.</th>
+                <th class="p-4">Order ID</th>
+                <th class="p-4">Nama CL (No IC)</th>
+                <th class="p-4">Pakej</th>
+                <th class="p-4">Tempoh</th>
+                <th class="p-4 text-right">Harga Pakej</th>
+                <th class="p-4">Tarikh & Masa Sesi</th>
+                <th class="p-4 text-right">Komisen CL</th>
+                <th class="p-4 text-center">Tindakan</th>
+            `;
+
+            if (ordersToDisplay.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="9" class="p-6 text-center text-slate-400 italic">Tiada rekod Order ditemui bagi julat tarikh ini.</td></tr>`;
+                return;
+            }
+
+            ordersToDisplay.forEach((item, index) => {
+                const matchedCl = cachedClData.find(c => String(c.ic).trim() === String(item.ic).trim());
+                const clDisplayName = matchedCl ? `${matchedCl.nama} (${item.ic})` : item.ic;
+
+                const formattedDate = formatDisplayDate(item.tarikh);
+                const formattedTime = formatDisplayTime(item.masa);
+
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-slate-50 transition-colors";
+                tr.innerHTML = `
+                    <td class="p-4 text-center font-bold text-slate-400">${index + 1}</td>
+                    <td class="p-4 font-mono text-xs font-bold text-amber-700">${item.orderId}</td>
+                    <td class="p-4 font-medium text-slate-800">${clDisplayName}</td>
+                    <td class="p-4"><span class="bg-amber-100 text-amber-900 font-bold text-xs px-2.5 py-1 rounded-full">${item.pakej}</span></td>
+                    <td class="p-4 text-xs font-bold text-slate-600">${item.tempoh || '-'}</td>
+                    <td class="p-4 text-right font-bold text-slate-700">RM ${parseFloat(item.harga || 0).toLocaleString('ms-MY', { minimumFractionDigits: 2 })}</td>
+                    <td class="p-4 text-xs text-slate-600 font-mono">${formattedDate}, ${formattedTime}</td>
+                    <td class="p-4 text-right font-black text-emerald-600">RM ${parseFloat(item.komisyen || 0).toLocaleString('ms-MY', { minimumFractionDigits: 2 })}</td>
+                    <td class="p-4 text-center">
+                        <div class="flex items-center justify-center gap-2">
+                            <button onclick="openEditOrderModal('${item.orderId}')" class="w-8 h-8 rounded-lg bg-amber-50 text-amber-700 hover:bg-amber-600 hover:text-white transition-all flex items-center justify-center"><i class="fa-solid fa-pen-to-square text-xs"></i></button>
+                            <button onclick="handleDeleteOrder('${item.orderId}')" class="w-8 h-8 rounded-lg bg-red-50 text-red-600 hover:bg-red-600 hover:text-white transition-all flex items-center justify-center"><i class="fa-solid fa-trash-can text-xs"></i></button>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // Simpan Tetapan Font (SuperAdmin)
+        function handleSaveFontSettings(e) {
+            e.preventDefault();
+            const headingFont = document.getElementById('setting-heading-font').value;
+            const bodyFont = document.getElementById('setting-body-font').value;
+
+            showConfirmation("Kemas Kini Tetapan", "Adakah anda pasti untuk mengemas kini tetapan font laman web?", () => {
+                const btn = document.getElementById('btn-save-font');
+                btn.disabled = true;
+                btn.innerText = "MENYIMPAN...";
+
+                const payload = {
+                    target: "settings",
+                    heading_font: headingFont,
+                    body_font: bodyFont
+                };
+
+                postToAppsScript(payload)
+                    .then(res => {
+                        btn.disabled = false;
+                        btn.innerText = "Simpan Tetapan Font";
+
+                        if (res.success) {
+                            alert(res.message || "Tetapan berjaya disimpan!");
+                            applyDynamicFonts(headingFont, bodyFont);
+                            fetchAndRenderDashboardTable();
+                        } else {
+                            alert("Gagal: " + (res.message || res.error));
+                        }
+                    })
+                    .catch(err => {
+                        btn.disabled = false;
+                        btn.innerText = "Simpan Tetapan Font";
+                        alert("Ralat: " + err.message);
+                    });
+            });
+        }
+
+        // ================= CRUD ADMIN =================
+        function openAddAdminModal() {
+            document.getElementById('admin-modal-title').innerText = "TAMBAH ADMIN BAHARU";
+            document.getElementById('admin-target-username').value = "";
+            document.getElementById('form-name-input').value = "";
+            document.getElementById('form-username-input').value = "";
+            document.getElementById('form-username-input').readOnly = false;
+            document.getElementById('form-password-input').value = "";
+            document.getElementById('form-phone-input').value = "";
+            document.getElementById('form-role-input').value = "Admin";
+
+            document.getElementById('admin-form-modal').classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function openEditAdminModal(username) {
+            const item = cachedAdminData.find(a => String(a.username).trim() === String(username).trim());
+            if (!item) return;
+
+            document.getElementById('admin-modal-title').innerText = "KEMAS KINI MAKLUMAT ADMIN";
+            document.getElementById('admin-target-username').value = item.username;
+            document.getElementById('form-name-input').value = item.name;
+            document.getElementById('form-username-input').value = item.username;
+            document.getElementById('form-username-input').readOnly = true;
+            document.getElementById('form-password-input').value = item.password;
+            document.getElementById('form-phone-input').value = item.phone;
+            document.getElementById('form-role-input').value = item.role || "Admin";
+
+            document.getElementById('admin-form-modal').classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeAdminFormModal() {
+            document.getElementById('admin-form-modal').classList.add('hidden');
+            document.body.style.overflow = '';
+        }
+
+        function handleSaveAdmin(e) {
+            e.preventDefault();
+            const targetUsername = document.getElementById('admin-target-username').value;
+            const name = document.getElementById('form-name-input').value.trim();
+            const username = document.getElementById('form-username-input').value.trim();
+            const password = document.getElementById('form-password-input').value.trim();
+            const phone = document.getElementById('form-phone-input').value.trim();
+            const role = document.getElementById('form-role-input').value;
+
+            const isEdit = Boolean(targetUsername);
+            const actionTitle = isEdit ? "Kemas Kini Admin" : "Tambah Admin Baharu";
+            const actionMsg = isEdit ? `Adakah anda pasti untuk mengemas kini maklumat Admin ${username}?` : `Adakah anda pasti untuk menambah Admin ${username}?`;
+
+            showConfirmation(actionTitle, actionMsg, () => {
+                const submitBtn = document.getElementById('btn-admin-form-submit');
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> <span>MENYIMPAN...</span>`;
+
+                const payload = {
+                    target: "admin",
+                    action: isEdit ? "update" : "add",
+                    targetUsername: targetUsername,
+                    name: name,
+                    username: username,
+                    password: password,
+                    phone: phone,
+                    role: role
+                };
+
+                postToAppsScript(payload)
+                    .then(res => {
+                        submitBtn.disabled = false;
+                        submitBtn.innerHTML = `<span>Simpan Admin</span>`;
+
+                        if (res.success) {
+                            alert(res.message || "Berjaya disimpan!");
+                            closeAdminFormModal();
+                            fetchAndRenderDashboardTable();
+                        } else {
+                            alert("Gagal: " + (res.message || res.error));
+                        }
+                    })
+                    .catch(err => {
+                        submitBtn.disabled = false;
+                        submitBtn.innerHTML = `<span>Simpan Admin</span>`;
+                        alert("Ralat penghantaran: " + err.message);
+                    });
+            });
+        }
+
+        function handleDeleteAdmin(username) {
+            showConfirmation("Padam Rekod Admin", `Adakah anda pasti untuk memadam Admin ${username}?`, () => {
+                const payload = {
+                    target: "admin",
+                    action: "delete",
+                    username: username
+                };
+
+                postToAppsScript(payload)
+                    .then(res => {
+                        if (res.success) {
+                            alert(res.message || "Rekod berjaya dipadam.");
+                            fetchAndRenderDashboardTable();
+                        } else {
+                            alert("Gagal memadam: " + (res.message || res.error));
+                        }
+                    })
+                    .catch(err => alert("Ralat: " + err.message));
+            });
+        }
+
+        // ================= CRUD CL =================
+        function openAddClModal() {
+            document.getElementById('cl-modal-title').innerText = "TAMBAH CL BAHARU";
+            document.getElementById('cl-target-ic').value = "";
+            document.getElementById('cl-nama-input').value = "";
+            document.getElementById('cl-lokasi-input').value = "";
+            document.getElementById('cl-phone-input').value = "";
+            document.getElementById('cl-ic-input').value = "";
+            document.getElementById('cl-ic-input').readOnly = false;
+            document.getElementById('cl-rating-input').value = "5.0";
+            document.getElementById('cl-komisyen-input').value = "0";
+
+            document.getElementById('cl-form-modal').classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function openEditClModal(ic) {
+            const item = cachedClData.find(c => String(c.ic).trim() === String(ic).trim());
+            if (!item) return;
+
+            document.getElementById('cl-modal-title').innerText = "KEMAS KINI MAKLUMAT CL";
+            document.getElementById('cl-target-ic').value = item.ic;
+            document.getElementById('cl-nama-input').value = item.nama;
+            document.getElementById('cl-lokasi-input').value = item.lokasi;
+            document.getElementById('cl-phone-input').value = item.phone;
+            document.getElementById('cl-ic-input').value = item.ic;
+            document.getElementById('cl-ic-input').readOnly = true;
+            document.getElementById('cl-rating-input').value = item.rating;
+            document.getElementById('cl-komisyen-input').value = item.komisyen;
+
+            document.getElementById('cl-form-modal').classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeClFormModal() {
+            document.getElementById('cl-form-modal').classList.add('hidden');
+            document.body.style.overflow = '';
+        }
+
+        function handleSaveCl(e) {
+            e.preventDefault();
+            const targetIc = document.getElementById('cl-target-ic').value;
+            const nama = document.getElementById('cl-nama-input').value.trim();
+            const lokasi = document.getElementById('cl-lokasi-input').value.trim();
+            const phone = document.getElementById('cl-phone-input').value.trim();
+            const ic = document.getElementById('cl-ic-input').value.trim();
+            const rating = parseFloat(document.getElementById('cl-rating-input').value);
+            const komisyen = parseFloat(document.getElementById('cl-komisyen-input').value);
+
+            const isEdit = Boolean(targetIc);
+            const actionTitle = isEdit ? "Kemas Kini CL" : "Tambah CL Baharu";
+            const actionMsg = isEdit ? `Adakah anda pasti untuk mengemas kini maklumat CL ${nama}?` : `Adakah anda pasti untuk menambah CL ${nama}?`;
+
+            showConfirmation(actionTitle, actionMsg, () => {
+                const submitBtn = document.getElementById('btn-cl-form-submit');
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> <span>MENYIMPAN...</span>`;
+
+                const payload = {
+                    target: "cl",
+                    action: isEdit ? "update" : "add",
+                    targetIc: targetIc,
+                    nama: nama,
+                    lokasi: lokasi,
+                    phone: phone,
+                    ic: ic,
+                    rating: rating,
+                    komisyen: komisyen
+                };
+
+                postToAppsScript(payload)
+                    .then(res => {
+                        submitBtn.disabled = false;
+                        submitBtn.innerHTML = `<span>Simpan CL</span>`;
+
+                        if (res.success) {
+                            alert(res.message || "Berjaya disimpan!");
+                            closeClFormModal();
+                            fetchAndRenderDashboardTable();
+                        } else {
+                            alert("Gagal: " + (res.message || res.error));
+                        }
+                    })
+                    .catch(err => {
+                        submitBtn.disabled = false;
+                        submitBtn.innerHTML = `<span>Simpan CL</span>`;
+                        alert("Ralat penghantaran: " + err.message);
+                    });
+            });
+        }
+
+        function handleDeleteCl(ic) {
+            showConfirmation("Padam Rekod CL", `Adakah anda pasti untuk memadam CL dengan No IC ${ic}?`, () => {
+                const payload = {
+                    target: "cl",
+                    action: "delete",
+                    ic: ic
+                };
+
+                postToAppsScript(payload)
+                    .then(res => {
+                        if (res.success) {
+                            alert(res.message || "Rekod berjaya dipadam.");
+                            fetchAndRenderDashboardTable();
+                        } else {
+                            alert("Gagal memadam: " + (res.message || res.error));
+                        }
+                    })
+                    .catch(err => alert("Ralat: " + err.message));
+            });
+        }
+
+        // ================= CRUD ORDERS =================
+        function openAddOrderModal() {
+            if (cachedClData.length === 0) {
+                alert("Tiada Confinement Lady (CL) berdaftar! Sila tambah CL terlebih dahulu.");
+                return;
+            }
+
+            document.getElementById('order-modal-title').innerText = "TAMBAH ORDER BAHARU";
+            document.getElementById('order-target-id').value = "";
+            document.getElementById('order-pakej-select').value = "Pakej Puteri";
+            document.getElementById('order-tarikh-input').value = new Date().toISOString().split('T')[0];
+            document.getElementById('order-masa-input').value = "10:00";
+            document.getElementById('order-komisyen-input').value = "";
+
+            const clSelect = document.getElementById('order-cl-select');
+            clSelect.innerHTML = '';
+            cachedClData.forEach(c => {
+                const opt = document.createElement('option');
+                opt.value = c.ic;
+                opt.innerText = `${c.nama} (${c.ic})`;
+                clSelect.appendChild(opt);
+            });
+
+            updatePackageOptionsAndPrice();
+
+            document.getElementById('order-form-modal').classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function openEditOrderModal(orderId) {
+            const item = cachedOrdersData.find(o => String(o.orderId).trim() === String(orderId).trim());
+            if (!item) return;
+
+            document.getElementById('order-modal-title').innerText = "KEMAS KINI ORDER";
+            document.getElementById('order-target-id').value = item.orderId;
+            document.getElementById('order-pakej-select').value = item.pakej;
+            
+            updatePackageOptionsAndPrice();
+            if (item.tempoh) document.getElementById('order-tempoh-select').value = item.tempoh;
+            updatePackageOptionsAndPrice();
+
+            if (item.tarikh) {
+                if (item.tarikh.includes('/')) {
+                    const p = item.tarikh.split('/');
+                    if (p.length === 3) document.getElementById('order-tarikh-input').value = `${p[2]}-${p[1]}-${p[0]}`;
+                } else {
+                    document.getElementById('order-tarikh-input').value = item.tarikh;
+                }
+            }
+
+            document.getElementById('order-masa-input').value = item.masa || "10:00";
+            document.getElementById('order-komisyen-input').value = item.komisyen;
+
+            const clSelect = document.getElementById('order-cl-select');
+            clSelect.innerHTML = '';
+            cachedClData.forEach(c => {
+                const opt = document.createElement('option');
+                opt.value = c.ic;
+                opt.innerText = `${c.nama} (${c.ic})`;
+                if (String(c.ic).trim() === String(item.ic).trim()) opt.selected = true;
+                clSelect.appendChild(opt);
+            });
+
+            document.getElementById('order-form-modal').classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeOrderFormModal() {
+            document.getElementById('order-form-modal').classList.add('hidden');
+            document.body.style.overflow = '';
+        }
+
+        function handleSaveOrder(e) {
+            e.preventDefault();
+            const targetOrderId = document.getElementById('order-target-id').value;
+            const clIc = document.getElementById('order-cl-select').value;
+            const pakej = document.getElementById('order-pakej-select').value;
+            const tempoh = document.getElementById('order-tempoh-select').value;
+            const harga = parseFloat(document.getElementById('order-harga-input').value);
+            const tarikh = document.getElementById('order-tarikh-input').value;
+            const masa = document.getElementById('order-masa-input').value;
+            const komisyen = parseFloat(document.getElementById('order-komisyen-input').value);
+
+            const isEdit = Boolean(targetOrderId);
+            const actionTitle = isEdit ? "Kemas Kini Order" : "Tambah Order Baharu";
+            const actionMsg = isEdit ? `Adakah anda pasti untuk mengemas kini Order ID ${targetOrderId}?` : `Adakah anda pasti untuk menambah tempahan ${pakej} (${tempoh})?`;
+
+            showConfirmation(actionTitle, actionMsg, () => {
+                const submitBtn = document.getElementById('btn-order-form-submit');
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> <span>MENYIMPAN...</span>`;
+
+                const payload = {
+                    target: "order",
+                    action: isEdit ? "update" : "add",
+                    orderId: targetOrderId,
+                    ic: clIc,
+                    pakej: pakej,
+                    tempoh: tempoh,
+                    harga: harga,
+                    tarikh: tarikh,
+                    masa: masa,
+                    komisyen: komisyen
+                };
+
+                postToAppsScript(payload)
+                    .then(res => {
+                        submitBtn.disabled = false;
+                        submitBtn.innerHTML = `<span>Simpan Order</span>`;
+
+                        if (res.success) {
+                            alert(res.message || "Berjaya disimpan!");
+                            closeOrderFormModal();
+                            fetchAndRenderDashboardTable();
+                        } else {
+                            alert("Gagal: " + (res.message || res.error));
+                        }
+                    })
+                    .catch(err => {
+                        submitBtn.disabled = false;
+                        submitBtn.innerHTML = `<span>Simpan Order</span>`;
+                        alert("Ralat penghantaran: " + err.message);
+                    });
+            });
+        }
+
+        function handleDeleteOrder(orderId) {
+            showConfirmation("Padam Order", `Adakah anda pasti untuk memadam Order ID ${orderId}? Komisen CL akan dikira semula secara automatik.`, () => {
+                const payload = {
+                    target: "order",
+                    action: "delete",
+                    orderId: orderId
+                };
+
+                postToAppsScript(payload)
+                    .then(res => {
+                        if (res.success) {
+                            alert(res.message || "Rekod Order berjaya dipadam.");
+                            fetchAndRenderDashboardTable();
+                        } else {
+                            alert("Gagal memadam: " + (res.message || res.error));
+                        }
+                    })
+                    .catch(err => alert("Ralat: " + err.message));
+            });
+        }
+
+        function showConfirmation(title, message, callback) {
+            document.getElementById('confirm-modal-title').innerText = title;
+            document.getElementById('confirm-modal-message').innerText = message;
+            onConfirmAction = callback;
+            document.getElementById('confirm-modal').classList.remove('hidden');
+        }
+
+        function closeConfirmModal(isProceed) {
+            document.getElementById('confirm-modal').classList.add('hidden');
+            if (isProceed && typeof onConfirmAction === 'function') {
+                onConfirmAction();
+            }
+            onConfirmAction = null;
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            updateNavState();
+            
+            fetchDataFromSheet().then(result => {
+                if (result.success && result.settings) {
+                    applyDynamicFonts(result.settings.heading_font, result.settings.body_font);
+                }
+            });
+
+            if (localStorage.getItem('syifa_admin_logged_in')) {
+                showPage('admin');
+            }
+        });
     </script>
 </body>
 </html>
