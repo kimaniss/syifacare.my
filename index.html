@@ -2615,7 +2615,7 @@
                             alert('Username atau Password tidak sah!');
                         }
                     } else {
-                        alert('Gagal membaca data dari Google Sheet: ' + (result.error || 'Ralat tidak diketahui'));
+                        alert('Gagal membaca data dari Server: ' + (result.error || 'Ralat tidak diketahui'));
                     }
                 })
                 .catch(err => {
@@ -2653,7 +2653,7 @@
 
         function fetchAndRenderDashboardTable() {
             const tbody = document.getElementById('dashboard-table-body');
-            tbody.innerHTML = `<tr><td colspan="9" class="p-6 text-center text-slate-400 italic"><i class="fa-solid fa-spinner fa-spin mr-2"></i>Memuat turun data dari Google Sheet...</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="9" class="p-6 text-center text-slate-400 italic"><i class="fa-solid fa-spinner fa-spin mr-2"></i>Memuat turun data dari Server...</td></tr>`;
 
             fetchDataFromSheet()
                 .then(result => {
@@ -2691,7 +2691,7 @@
                     }
                 })
                 .catch(err => {
-                    tbody.innerHTML = `<tr><td colspan="9" class="p-6 text-center text-red-500 italic">Gagal menyambung ke Google Sheet. (${err.message})</td></tr>`;
+                    tbody.innerHTML = `<tr><td colspan="9" class="p-6 text-center text-red-500 italic">Gagal menyambung ke Server. (${err.message})</td></tr>`;
                 });
         }
 
