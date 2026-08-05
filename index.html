@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Syifa Care - Pantang Berteman, Belai Tradisi, Pulih Berseri</title>
     <script src="https://cdn.tailwindcss.com"></script>
-	<!-- Library SheetJS untuk Eksport Excel Pantas -->
+    <!-- Library SheetJS untuk Eksport Excel Pantas -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -1841,10 +1841,10 @@
             </div>
         </div>
 
-<!-- SUB-TAB SWITCHER UNTUK DASHBOARD DENGAN BUTANG EXCEL & REFRESH SELARI -->
-<div class="flex flex-wrap items-center justify-between border-b border-slate-200 pb-3 gap-3">
+<!-- SUB-TAB SWITCHER UNTUK DASHBOARD DENGAN INPUT CARIAN, EXCEL & REFRESH SELARI -->
+<div class="flex flex-col md:flex-row items-stretch md:items-center justify-between border-b border-slate-200 pb-3 gap-3">
     <!-- Bahagian Kiri: Butang Tab Navigation -->
-    <div class="flex items-center gap-2">
+    <div class="flex items-center gap-2 shrink-0">
         <button id="tab-btn-primary" onclick="switchDashboardTab('primary')" class="px-5 py-2 rounded-full text-xs font-bold bg-brand-plum text-white transition-all shadow-sm">
             Primary View
         </button>
@@ -1853,14 +1853,27 @@
         </button>
     </div>
 
-<!-- Bahagian Kanan: Butang Export Excel & Refresh -->
-    <div class="flex items-center gap-2">
+<!-- Bahagian Kanan: Kotak Carian + Export Excel + Refresh -->
+    <div class="flex flex-wrap items-center gap-2 w-full md:w-auto">
+        <!-- Input Carian Dinamik -->
+        <div class="relative flex-1 md:w-64">
+            <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+                <i class="fa-solid fa-magnifying-glass text-xs"></i>
+            </span>
+            <input type="text" id="dashboard-search-input" oninput="handleDashboardSearch()" placeholder="Cari dalam jadual..." class="w-full pl-9 pr-8 py-1.5 rounded-full border border-slate-200 text-xs font-medium focus:outline-none focus:border-brand-plum focus:ring-1 focus:ring-brand-plum bg-white shadow-sm">
+            <button id="btn-clear-search" onclick="clearDashboardSearch()" class="hidden absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-600">
+                <i class="fa-solid fa-circle-xmark text-xs"></i>
+            </button>
+        </div>
+
+<!-- Butang Export Excel -->
         <button id="btn-export-excel" onclick="exportToExcel()" title="Eksport ke Fail Excel" class="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white px-3.5 py-2 rounded-full text-xs font-bold transition-all shadow-sm active:scale-95 shrink-0">
             <i class="fa-solid fa-file-excel text-sm"></i>
             <span class="hidden sm:inline">Export Excel</span>
         </button>
 
-<button id="btn-refresh-dashboard" onclick="refreshDashboardData()" title="Muat Semula Data" class="inline-flex items-center gap-2 bg-white hover:bg-slate-100 text-slate-700 px-3.5 py-2 rounded-full text-xs font-bold transition-all border border-slate-200 shadow-sm active:scale-95 group shrink-0">
+<!-- Butang Refresh -->
+        <button id="btn-refresh-dashboard" onclick="refreshDashboardData()" title="Muat Semula Data" class="inline-flex items-center gap-2 bg-white hover:bg-slate-100 text-slate-700 px-3.5 py-2 rounded-full text-xs font-bold transition-all border border-slate-200 shadow-sm active:scale-95 group shrink-0">
             <i id="icon-refresh-spinner" class="fa-solid fa-arrows-rotate text-brand-plum text-sm transition-transform group-hover:rotate-180 duration-500"></i>
             <span class="hidden sm:inline text-slate-600">Muat Semula</span>
         </button>
@@ -2494,6 +2507,11 @@
         let currentSubTab = "primary";
         let onConfirmAction = null;
 
+        // STATE GLOBAL KAWALAN CARIAN & SORTING
+        let currentSearchQuery = "";
+        let currentSortColumn = null;
+        let currentSortDirection = "original";
+
         function updateNavState() {
             const currentAdmin = localStorage.getItem('syifa_admin_logged_in');
             const currentAdminName = localStorage.getItem('syifa_admin_name') || currentAdmin;
@@ -2546,32 +2564,31 @@
             }
         }
 
-        // 1. PEMBAIKAN PARSER JSON & FETCH POST
-async function safeJsonParse(res) {
-    const text = await res.text();
-    const trimmed = text ? text.trim() : "";
-    
-    if (trimmed.startsWith('<') || trimmed.startsWith('<!DOCTYPE')) {
-        throw new Error("Sistem mengambil masa untuk bertindak balas. Sila cuba semula.");
-    }
-    
-    try {
-        return JSON.parse(text);
-    } catch (e) {
-        throw new Error("Format respon server tidak sah.");
-    }
-}
+        async function safeJsonParse(res) {
+            const text = await res.text();
+            const trimmed = text ? text.trim() : "";
+            
+            if (trimmed.startsWith('<') || trimmed.startsWith('<!DOCTYPE')) {
+                throw new Error("Sistem mengambil masa untuk bertindak balas. Sila cuba semula.");
+            }
+            
+            try {
+                return JSON.parse(text);
+            } catch (e) {
+                throw new Error("Format respon server tidak sah.");
+            }
+        }
             
         async function postToAppsScript(payload) {
-    const response = await fetch(APPS_SCRIPT_URL, {
-        method: "POST",
-        headers: { "Content-Type": "text/plain" },
-        body: JSON.stringify(payload),
-        redirect: "follow"
-    });
+            const response = await fetch(APPS_SCRIPT_URL, {
+                method: "POST",
+                headers: { "Content-Type": "text/plain" },
+                body: JSON.stringify(payload),
+                redirect: "follow"
+            });
 
-    return await safeJsonParse(response);
-}
+            return await safeJsonParse(response);
+        }
 
         async function fetchDataFromSheet() {
             const response = await fetch(APPS_SCRIPT_URL);
@@ -2598,164 +2615,172 @@ async function safeJsonParse(res) {
             document.body.style.overflow = '';
         }
 
-        // 2. PEMBAIKAN LOG MASUK PANTAS (PAGI & DIRECT REDIRECT KE DASHBOARD)
-function handleAdminLogin(e) {
-    e.preventDefault();
-    const usernameInput = document.getElementById('admin-username-input').value.trim();
-    const passwordInput = document.getElementById('admin-password-input').value.trim();
+        function handleAdminLogin(e) {
+            e.preventDefault();
+            const usernameInput = document.getElementById('admin-username-input').value.trim();
+            const passwordInput = document.getElementById('admin-password-input').value.trim();
 
-    const submitBtn = document.getElementById('btn-login-submit');
-    submitBtn.disabled = true;
-    submitBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> <span>MENYEMAK...</span>`;
+            const submitBtn = document.getElementById('btn-login-submit');
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> <span>MENYEMAK...</span>`;
 
-    postToAppsScript({
-        target: "login",
-        username: usernameInput,
-        password: passwordInput
-    })
-    .then(result => {
-        submitBtn.disabled = false;
-        submitBtn.innerHTML = `<span>LOG MASUK</span>`;
+            postToAppsScript({
+                target: "login",
+                username: usernameInput,
+                password: passwordInput
+            })
+            .then(result => {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = `<span>LOG MASUK</span>`;
 
-        if (result.success && result.admin) {
-            // Simpan maklumat sesi
-            localStorage.setItem('syifa_admin_logged_in', result.admin.username);
-            localStorage.setItem('syifa_admin_name', result.admin.name || result.admin.username);
-            localStorage.setItem('syifa_admin_role', result.admin.role || "Admin");
+                if (result.success && result.admin) {
+                    localStorage.setItem('syifa_admin_logged_in', result.admin.username);
+                    localStorage.setItem('syifa_admin_name', result.admin.name || result.admin.username);
+                    localStorage.setItem('syifa_admin_role', result.admin.role || "Admin");
 
-            closeAdminLoginModal();
-            updateNavState();
+                    closeAdminLoginModal();
+                    updateNavState();
 
-            // Masukkan data awal terus ke cache jika backend memulangkannya semasa login
-            if (result.admins) cachedAdminData = result.admins;
-            if (result.cl) cachedClData = result.cl;
-            if (result.orders) cachedOrdersData = result.orders;
+                    if (result.admins) cachedAdminData = result.admins;
+                    if (result.cl) cachedClData = result.cl;
+                    if (result.orders) cachedOrdersData = result.orders;
 
-            // Buka Dashboard serta-merta
-            showPage('admin');
+                    showPage('admin');
 
-            document.getElementById('admin-username-input').value = '';
-            document.getElementById('admin-password-input').value = '';
-        } else {
-            alert(result.message || 'Username atau Password tidak sah!');
+                    document.getElementById('admin-username-input').value = '';
+                    document.getElementById('admin-password-input').value = '';
+                } else {
+                    alert(result.message || 'Username atau Password tidak sah!');
+                }
+            })
+            .catch(err => {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = `<span>LOG MASUK</span>`;
+                alert(err.message || 'Ralat Rangkaian semasa log masuk.');
+            });
         }
-    })
-    .catch(err => {
-        submitBtn.disabled = false;
-        submitBtn.innerHTML = `<span>LOG MASUK</span>`;
-        alert(err.message || 'Ralat Rangkaian semasa log masuk.');
-    });
-}
 
-        // 3. PEMBAIKAN LOG KELUAR
-function handleAdminLogout() {
-    showConfirmation("Log Keluar", "Adakah anda pasti untuk log keluar dari sistem Admin?", () => {
-        localStorage.removeItem('syifa_admin_logged_in');
-        localStorage.removeItem('syifa_admin_name');
-        localStorage.removeItem('syifa_admin_role');
-        
-        // Reset cache tempatan
-        cachedAdminData = [];
-        cachedClData = [];
-        cachedOrdersData = [];
+        function handleAdminLogout() {
+            showConfirmation("Log Keluar", "Adakah anda pasti untuk log keluar dari sistem Admin?", () => {
+                localStorage.removeItem('syifa_admin_logged_in');
+                localStorage.removeItem('syifa_admin_name');
+                localStorage.removeItem('syifa_admin_role');
+                
+                cachedAdminData = [];
+                cachedClData = [];
+                cachedOrdersData = [];
 
-        updateNavState();
-        showPage('main');
-    });
-}
+                updateNavState();
+                showPage('main');
+            });
+        }
 
         function switchDashboardTab(tabType) {
             currentSubTab = tabType;
+            currentSortColumn = null;
+            currentSortDirection = "original";
+
             const primaryBtn = document.getElementById('tab-btn-primary');
             const secondaryBtn = document.getElementById('tab-btn-secondary');
 
             if (tabType === 'primary') {
-                if (primaryBtn) primaryBtn.className = "px-5 py-2 rounded-full text-xs font-bold bg-brand-plum text-white transition-all";
+                if (primaryBtn) primaryBtn.className = "px-5 py-2 rounded-full text-xs font-bold bg-brand-plum text-white transition-all shadow-sm";
                 if (secondaryBtn) secondaryBtn.className = "px-5 py-2 rounded-full text-xs font-bold bg-slate-200 text-slate-600 hover:bg-slate-300 transition-all";
             } else {
                 if (primaryBtn) primaryBtn.className = "px-5 py-2 rounded-full text-xs font-bold bg-slate-200 text-slate-600 hover:bg-slate-300 transition-all";
-                if (secondaryBtn) secondaryBtn.className = "px-5 py-2 rounded-full text-xs font-bold bg-brand-plum text-white transition-all";
+                if (secondaryBtn) secondaryBtn.className = "px-5 py-2 rounded-full text-xs font-bold bg-brand-plum text-white transition-all shadow-sm";
             }
 
             renderCurrentDashboardTable();
         }
 
-        // Fungsi Khas untuk Butang Refresh dengan Animasi Putaran
-function refreshDashboardData() {
-    const refreshBtn = document.getElementById('btn-refresh-dashboard');
-    const spinnerIcon = document.getElementById('icon-refresh-spinner');
+        // FUNGSI CARIAN & SORTING
+        function handleDashboardSearch() {
+            const input = document.getElementById('dashboard-search-input');
+            const clearBtn = document.getElementById('btn-clear-search');
+            currentSearchQuery = input ? input.value.trim().toLowerCase() : "";
 
-    if (refreshBtn) refreshBtn.disabled = true;
-    if (spinnerIcon) spinnerIcon.classList.add('fa-spin');
-
-    fetchAndRenderDashboardTable()
-        .then(() => {
-            setTimeout(() => {
-                if (refreshBtn) refreshBtn.disabled = false;
-                if (spinnerIcon) spinnerIcon.classList.remove('fa-spin');
-            }, 400);
-        })
-        .catch(() => {
-            if (refreshBtn) refreshBtn.disabled = false;
-            if (spinnerIcon) spinnerIcon.classList.remove('fa-spin');
-        });
-}
-
-// Kemaskini fetchAndRenderDashboardTable supaya mengembalikan Promise
-function fetchAndRenderDashboardTable() {
-    const tbody = document.getElementById('dashboard-table-body');
-    if (tbody) {
-        tbody.innerHTML = `<tr><td colspan="9" class="p-6 text-center text-slate-400 italic"><i class="fa-solid fa-spinner fa-spin mr-2"></i>Memuat turun data dari Server...</td></tr>`;
-    }
-
-    return fetchDataFromSheet()
-        .then(result => {
-            if (result.success) {
-                cachedAdminData = result.admins || [];
-                cachedClData = result.cl || [];
-                cachedOrdersData = result.orders || [];
-                const settings = result.settings || {};
-
-                applyDynamicFonts(settings.heading_font, settings.body_font);
-
-                const currentRole = localStorage.getItem('syifa_admin_role') || "Admin";
-                const isSuper = isUserSuperAdmin(currentRole);
-                const superSection = document.getElementById('superadmin-top-section');
-
-                if (isSuper && superSection) {
-                    superSection.style.display = 'block';
-
-                    const countSuperAdmins = cachedAdminData.filter(a => isUserSuperAdmin(a.role)).length;
-                    const countNormalAdmins = cachedAdminData.filter(a => !isUserSuperAdmin(a.role)).length;
-
-                    const elSuper = document.getElementById('stat-total-superadmins');
-                    const elAdmins = document.getElementById('stat-total-admins');
-                    const elCl = document.getElementById('stat-total-cl');
-                    
-                    if (elSuper) elSuper.innerText = countSuperAdmins;
-                    if (elAdmins) elAdmins.innerText = countNormalAdmins;
-                    if (elCl) elCl.innerText = cachedClData.length;
-
-                    const hFontInput = document.getElementById('setting-heading-font');
-                    const bFontInput = document.getElementById('setting-body-font');
-                    if (hFontInput) hFontInput.value = settings.heading_font || "Playfair Display";
-                    if (bFontInput) bFontInput.value = settings.body_font || "Plus Jakarta Sans";
-                } else if (superSection) {
-                    superSection.style.display = 'none';
-                }
-
-                renderCurrentDashboardTable();
-            } else if (tbody) {
-                tbody.innerHTML = `<tr><td colspan="9" class="p-6 text-center text-red-500 italic">Ralat: ${result.error}</td></tr>`;
+            if (clearBtn) {
+                if (currentSearchQuery.length > 0) clearBtn.classList.remove('hidden');
+                else clearBtn.classList.add('hidden');
             }
-        })
-        .catch(err => {
-            if (tbody) {
-                tbody.innerHTML = `<tr><td colspan="9" class="p-6 text-center text-red-500 italic">Gagal menyambung ke Server. (${err.message})</td></tr>`;
-            }
-        });
-}
+            renderCurrentDashboardTable();
+        }
 
+        function clearDashboardSearch() {
+            const input = document.getElementById('dashboard-search-input');
+            const clearBtn = document.getElementById('btn-clear-search');
+            if (input) input.value = "";
+            if (clearBtn) clearBtn.classList.add('hidden');
+            currentSearchQuery = "";
+            renderCurrentDashboardTable();
+        }
+
+        function toggleSort(columnKey) {
+            if (currentSortColumn === columnKey) {
+                if (currentSortDirection === "asc") currentSortDirection = "desc";
+                else if (currentSortDirection === "desc") {
+                    currentSortColumn = null;
+                    currentSortDirection = "original";
+                } else currentSortDirection = "asc";
+            } else {
+                currentSortColumn = columnKey;
+                currentSortDirection = "asc";
+            }
+            renderCurrentDashboardTable();
+        }
+
+        function getSortIcon(columnKey) {
+            if (currentSortColumn !== columnKey || currentSortDirection === "original") {
+                return `<i class="fa-solid fa-sort ml-1 text-slate-300 opacity-60 hover:text-slate-500"></i>`;
+            }
+            if (currentSortDirection === "asc") {
+                return `<i class="fa-solid fa-sort-up ml-1 text-brand-plum font-bold"></i>`;
+            }
+            return `<i class="fa-solid fa-sort-down ml-1 text-brand-plum font-bold"></i>`;
+        }
+
+        function processDataView(dataArray, searchKeys) {
+            let result = [...dataArray];
+
+            if (currentSearchQuery) {
+                result = result.filter(item => {
+                    return searchKeys.some(key => {
+                        const val = item[key];
+                        if (val === null || val === undefined) return false;
+                        return String(val).toLowerCase().includes(currentSearchQuery);
+                    });
+                });
+            }
+
+            if (currentSortColumn && currentSortDirection !== "original") {
+                result.sort((a, b) => {
+                    let valA = a[currentSortColumn];
+                    let valB = b[currentSortColumn];
+
+                    if (typeof valA === 'string') valA = valA.replace(/'/g, '').trim();
+                    if (typeof valB === 'string') valB = valB.replace(/'/g, '').trim();
+
+                    const numA = Number(valA);
+                    const numB = Number(valB);
+
+                    if (!isNaN(numA) && !isNaN(numB) && valA !== "" && valB !== "") {
+                        return currentSortDirection === "asc" ? numA - numB : numB - numA;
+                    }
+
+                    const strA = String(valA || "").toLowerCase();
+                    const strB = String(valB || "").toLowerCase();
+
+                    if (strA < strB) return currentSortDirection === "asc" ? -1 : 1;
+                    if (strA > strB) return currentSortDirection === "asc" ? 1 : -1;
+                    return 0;
+                });
+            }
+
+            return result;
+        }
+
+        // TUNGGAL: KONTROL RENDERING PUSAT
         function renderCurrentDashboardTable() {
             const currentRole = localStorage.getItem('syifa_admin_role') || "Admin";
             const isSuper = isUserSuperAdmin(currentRole);
@@ -2772,15 +2797,14 @@ function fetchAndRenderDashboardTable() {
             const startDate = isSuper ? document.getElementById('superadmin-start-date')?.value : '';
             const endDate = isSuper ? document.getElementById('superadmin-end-date')?.value : '';
 
-            const filteredOrders = cachedOrdersData.filter(o => isOrderInCustomDateRange(o, startDate, endDate));
+            const filteredOrdersByDate = cachedOrdersData.filter(o => isOrderInCustomDateRange(o, startDate, endDate));
 
             if (isSuper) {
                 const elTotalOrders = document.getElementById('stat-total-orders');
                 const elTotalKomisen = document.getElementById('stat-total-komisen');
-                
-                if (elTotalOrders) elTotalOrders.innerText = filteredOrders.length;
-                
-                const totalKomisen = filteredOrders.reduce((sum, item) => sum + parseFloat(item.komisyen || 0), 0);
+                if (elTotalOrders) elTotalOrders.innerText = filteredOrdersByDate.length;
+
+                const totalKomisen = filteredOrdersByDate.reduce((sum, item) => sum + parseFloat(item.komisyen || 0), 0);
                 if (elTotalKomisen) {
                     elTotalKomisen.innerText = `RM ${totalKomisen.toLocaleString('ms-MY', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
                 }
@@ -2804,24 +2828,26 @@ function fetchAndRenderDashboardTable() {
 
                 if (currentSubTab === 'primary') {
                     if (tableTitle) tableTitle.innerHTML = `<i class="fa-solid fa-user-shield text-brand-plum"></i> <span>Senarai Pengguna Admin</span>`;
-                    if (countBadge) countBadge.innerText = `${cachedAdminData.length} Admin`;
+
+                    const processedAdmins = processDataView(cachedAdminData, ['name', 'username', 'phone', 'role']);
+                    if (countBadge) countBadge.innerText = `${processedAdmins.length} Admin`;
 
                     thead.innerHTML = `
                         <th class="p-4 text-center">Bil.</th>
-                        <th class="p-4">Nama</th>
-                        <th class="p-4">Username</th>
-                        <th class="p-4">No Telefon</th>
-                        <th class="p-4">Peranan</th>
+                        <th class="p-4 cursor-pointer select-none hover:bg-slate-100" onclick="toggleSort('name')">Nama ${getSortIcon('name')}</th>
+                        <th class="p-4 cursor-pointer select-none hover:bg-slate-100" onclick="toggleSort('username')">Username ${getSortIcon('username')}</th>
+                        <th class="p-4 cursor-pointer select-none hover:bg-slate-100" onclick="toggleSort('phone')">No Telefon ${getSortIcon('phone')}</th>
+                        <th class="p-4 cursor-pointer select-none hover:bg-slate-100" onclick="toggleSort('role')">Peranan ${getSortIcon('role')}</th>
                         <th class="p-4">Password</th>
                         <th class="p-4 text-center">Tindakan</th>
                     `;
 
-                    if (cachedAdminData.length === 0) {
-                        tbody.innerHTML = `<tr><td colspan="7" class="p-6 text-center text-slate-400 italic">Tiada rekod Admin.</td></tr>`;
+                    if (processedAdmins.length === 0) {
+                        tbody.innerHTML = `<tr><td colspan="7" class="p-6 text-center text-slate-400 italic">Tiada rekod Admin ditemui.</td></tr>`;
                         return;
                     }
 
-                    cachedAdminData.forEach((item, index) => {
+                    processedAdmins.forEach((item, index) => {
                         const tr = document.createElement('tr');
                         tr.className = "hover:bg-slate-50 transition-colors";
                         const isSuperRole = isUserSuperAdmin(item.role);
@@ -2847,7 +2873,7 @@ function fetchAndRenderDashboardTable() {
                         tbody.appendChild(tr);
                     });
                 } else {
-                    renderOrderTable(tableTitle, countBadge, thead, tbody, filteredOrders);
+                    renderOrderTable(tableTitle, countBadge, thead, tbody, filteredOrdersByDate);
                 }
             } else {
                 if (primaryBtn) primaryBtn.innerText = "Senarai CL";
@@ -2855,25 +2881,27 @@ function fetchAndRenderDashboardTable() {
 
                 if (currentSubTab === 'primary') {
                     if (tableTitle) tableTitle.innerHTML = `<i class="fa-solid fa-users text-brand-teal"></i> <span>Senarai Confinement Lady (CL)</span>`;
-                    if (countBadge) countBadge.innerText = `${cachedClData.length} CL Berdaftar`;
+
+                    const processedCL = processDataView(cachedClData, ['nama', 'lokasi', 'phone', 'ic']);
+                    if (countBadge) countBadge.innerText = `${processedCL.length} CL Berdaftar`;
 
                     thead.innerHTML = `
                         <th class="p-4 text-center">Bil.</th>
-                        <th class="p-4">Nama CL</th>
-                        <th class="p-4">Lokasi Cover</th>
-                        <th class="p-4">No Telefon</th>
-                        <th class="p-4">No IC (ID)</th>
-                        <th class="p-4 text-center">Rating</th>
-                        <th class="p-4 text-right">Jumlah Komisyen</th>
+                        <th class="p-4 cursor-pointer select-none hover:bg-slate-100" onclick="toggleSort('nama')">Nama CL ${getSortIcon('nama')}</th>
+                        <th class="p-4 cursor-pointer select-none hover:bg-slate-100" onclick="toggleSort('lokasi')">Lokasi Cover ${getSortIcon('lokasi')}</th>
+                        <th class="p-4 cursor-pointer select-none hover:bg-slate-100" onclick="toggleSort('phone')">No Telefon ${getSortIcon('phone')}</th>
+                        <th class="p-4 cursor-pointer select-none hover:bg-slate-100" onclick="toggleSort('ic')">No IC (ID) ${getSortIcon('ic')}</th>
+                        <th class="p-4 text-center cursor-pointer select-none hover:bg-slate-100" onclick="toggleSort('rating')">Rating ${getSortIcon('rating')}</th>
+                        <th class="p-4 text-right cursor-pointer select-none hover:bg-slate-100" onclick="toggleSort('komisyen')">Jumlah Komisyen ${getSortIcon('komisyen')}</th>
                         <th class="p-4 text-center">Tindakan</th>
                     `;
 
-                    if (cachedClData.length === 0) {
+                    if (processedCL.length === 0) {
                         tbody.innerHTML = `<tr><td colspan="8" class="p-6 text-center text-slate-400 italic">Tiada rekod CL ditemui.</td></tr>`;
                         return;
                     }
 
-                    cachedClData.forEach((item, index) => {
+                    processedCL.forEach((item, index) => {
                         const tr = document.createElement('tr');
                         tr.className = "hover:bg-slate-50 transition-colors";
                         const waUrl = formatWhatsAppUrl(item.phone);
@@ -2905,30 +2933,38 @@ function fetchAndRenderDashboardTable() {
 
         function renderOrderTable(tableTitle, countBadge, thead, tbody, ordersToDisplay) {
             if (tableTitle) tableTitle.innerHTML = `<i class="fa-solid fa-receipt text-amber-600"></i> <span>Senarai Order Tempahan</span>`;
-            if (countBadge) countBadge.innerText = `${ordersToDisplay.length} Tempahan`;
 
-            thead.innerHTML = `
-                <th class="p-4 text-center">Bil.</th>
-                <th class="p-4">Order ID</th>
-                <th class="p-4">Nama CL (No IC)</th>
-                <th class="p-4">Pakej</th>
-                <th class="p-4">Tempoh</th>
-                <th class="p-4 text-right">Harga Pakej</th>
-                <th class="p-4">Tarikh & Masa Sesi</th>
-                <th class="p-4 text-right">Komisen CL</th>
-                <th class="p-4 text-center">Tindakan</th>
-            `;
-
-            if (ordersToDisplay.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="9" class="p-6 text-center text-slate-400 italic">Tiada rekod Order ditemui bagi julat tarikh ini.</td></tr>`;
-                return;
-            }
-
-            ordersToDisplay.forEach((item, index) => {
+            const mappedOrders = ordersToDisplay.map(item => {
                 const cleanItemIc = String(item.ic || '').replace(/'/g, '').trim();
                 const matchedCl = cachedClData.find(c => String(c.ic).replace(/'/g, '').trim() === cleanItemIc);
                 const clDisplayName = matchedCl ? `${matchedCl.nama} (${cleanItemIc})` : cleanItemIc;
+                return {
+                    ...item,
+                    clDisplayName: clDisplayName
+                };
+            });
 
+            const processedOrders = processDataView(mappedOrders, ['orderId', 'ic', 'clDisplayName', 'pakej', 'tempoh', 'tarikh']);
+            if (countBadge) countBadge.innerText = `${processedOrders.length} Tempahan`;
+
+            thead.innerHTML = `
+                <th class="p-4 text-center">Bil.</th>
+                <th class="p-4 cursor-pointer select-none hover:bg-slate-100" onclick="toggleSort('orderId')">Order ID ${getSortIcon('orderId')}</th>
+                <th class="p-4 cursor-pointer select-none hover:bg-slate-100" onclick="toggleSort('clDisplayName')">Nama CL (No IC) ${getSortIcon('clDisplayName')}</th>
+                <th class="p-4 cursor-pointer select-none hover:bg-slate-100" onclick="toggleSort('pakej')">Pakej ${getSortIcon('pakej')}</th>
+                <th class="p-4 cursor-pointer select-none hover:bg-slate-100" onclick="toggleSort('tempoh')">Tempoh ${getSortIcon('tempoh')}</th>
+                <th class="p-4 text-right cursor-pointer select-none hover:bg-slate-100" onclick="toggleSort('harga')">Harga Pakej ${getSortIcon('harga')}</th>
+                <th class="p-4 cursor-pointer select-none hover:bg-slate-100" onclick="toggleSort('tarikh')">Tarikh & Masa Sesi ${getSortIcon('tarikh')}</th>
+                <th class="p-4 text-right cursor-pointer select-none hover:bg-slate-100" onclick="toggleSort('komisyen')">Komisen CL ${getSortIcon('komisyen')}</th>
+                <th class="p-4 text-center">Tindakan</th>
+            `;
+
+            if (processedOrders.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="9" class="p-6 text-center text-slate-400 italic">Tiada rekod Order ditemui.</td></tr>`;
+                return;
+            }
+
+            processedOrders.forEach((item, index) => {
                 const formattedDate = formatDisplayDate(item.tarikh);
                 const formattedTime = formatDisplayTime(item.masa);
 
@@ -2937,7 +2973,7 @@ function fetchAndRenderDashboardTable() {
                 tr.innerHTML = `
                     <td class="p-4 text-center font-bold text-slate-400">${index + 1}</td>
                     <td class="p-4 font-mono text-xs font-bold text-amber-700">${item.orderId}</td>
-                    <td class="p-4 font-medium text-slate-800">${clDisplayName}</td>
+                    <td class="p-4 font-medium text-slate-800">${item.clDisplayName}</td>
                     <td class="p-4"><span class="bg-amber-100 text-amber-900 font-bold text-xs px-2.5 py-1 rounded-full">${item.pakej}</span></td>
                     <td class="p-4 text-xs font-bold text-slate-600">${item.tempoh || '-'}</td>
                     <td class="p-4 text-right font-bold text-slate-700">RM ${parseFloat(item.harga || 0).toLocaleString('ms-MY', { minimumFractionDigits: 2 })}</td>
@@ -2954,6 +2990,234 @@ function fetchAndRenderDashboardTable() {
             });
         }
 
+        function refreshDashboardData() {
+            const refreshBtn = document.getElementById('btn-refresh-dashboard');
+            const spinnerIcon = document.getElementById('icon-refresh-spinner');
+            if (refreshBtn) refreshBtn.disabled = true;
+            if (spinnerIcon) spinnerIcon.classList.add('fa-spin');
+
+            fetchAndRenderDashboardTable()
+                .then(() => {
+                    setTimeout(() => {
+                        if (refreshBtn) refreshBtn.disabled = false;
+                        if (spinnerIcon) spinnerIcon.classList.remove('fa-spin');
+                    }, 400);
+                })
+                .catch(() => {
+                    if (refreshBtn) refreshBtn.disabled = false;
+                    if (spinnerIcon) spinnerIcon.classList.remove('fa-spin');
+                });
+        }
+
+        function fetchAndRenderDashboardTable() {
+            const tbody = document.getElementById('dashboard-table-body');
+            if (tbody) {
+                tbody.innerHTML = `<tr><td colspan="9" class="p-6 text-center text-slate-400 italic"><i class="fa-solid fa-spinner fa-spin mr-2"></i>Memuat turun data dari Server...</td></tr>`;
+            }
+
+            return fetchDataFromSheet()
+                .then(result => {
+                    if (result.success) {
+                        cachedAdminData = result.admins || [];
+                        cachedClData = result.cl || [];
+                        cachedOrdersData = result.orders || [];
+                        const settings = result.settings || {};
+
+                        applyDynamicFonts(settings.heading_font, settings.body_font);
+
+                        const currentRole = localStorage.getItem('syifa_admin_role') || "Admin";
+                        const isSuper = isUserSuperAdmin(currentRole);
+                        const superSection = document.getElementById('superadmin-top-section');
+
+                        if (isSuper && superSection) {
+                            superSection.style.display = 'block';
+
+                            const countSuperAdmins = cachedAdminData.filter(a => isUserSuperAdmin(a.role)).length;
+                            const countNormalAdmins = cachedAdminData.filter(a => !isUserSuperAdmin(a.role)).length;
+
+                            const elSuper = document.getElementById('stat-total-superadmins');
+                            const elAdmins = document.getElementById('stat-total-admins');
+                            const elCl = document.getElementById('stat-total-cl');
+                            
+                            if (elSuper) elSuper.innerText = countSuperAdmins;
+                            if (elAdmins) elAdmins.innerText = countNormalAdmins;
+                            if (elCl) elCl.innerText = cachedClData.length;
+
+                            const hFontInput = document.getElementById('setting-heading-font');
+                            const bFontInput = document.getElementById('setting-body-font');
+                            if (hFontInput) hFontInput.value = settings.heading_font || "Playfair Display";
+                            if (bFontInput) bFontInput.value = settings.body_font || "Plus Jakarta Sans";
+                        } else if (superSection) {
+                            superSection.style.display = 'none';
+                        }
+
+                        renderCurrentDashboardTable();
+                    } else if (tbody) {
+                        tbody.innerHTML = `<tr><td colspan="9" class="p-6 text-center text-red-500 italic">Ralat: ${result.error}</td></tr>`;
+                    }
+                })
+                .catch(err => {
+                    if (tbody) {
+                        tbody.innerHTML = `<tr><td colspan="9" class="p-6 text-center text-red-500 italic">Gagal menyambung ke Server. (${err.message})</td></tr>`;
+                    }
+                });
+        }
+
+        // EXPORT EXCEL
+        function formatExcelTimestamp(rawVal) {
+            if (!rawVal) {
+                const now = new Date();
+                const d = String(now.getDate()).padStart(2, '0');
+                const m = String(now.getMonth() + 1).padStart(2, '0');
+                const y = now.getFullYear();
+                let hours = now.getHours();
+                const minutes = String(now.getMinutes()).padStart(2, '0');
+                const ampm = hours >= 12 ? 'PM' : 'AM';
+                hours = hours % 12 || 12;
+                return `${d}-${m}-${y}, ${String(hours).padStart(2, '0')}:${minutes}${ampm}`;
+            }
+            let str = String(rawVal).replace(/'/g, '').trim();
+            if (str.includes(',')) {
+                const parts = str.split(',');
+                const datePart = parts[0].trim().replace(/\//g, '-');
+                const timePart = parts[1].trim();
+                return `${datePart}, ${timePart}`;
+            }
+            const d = new Date(str);
+            if (!isNaN(d.getTime())) {
+                const day = String(d.getDate()).padStart(2, '0');
+                const month = String(d.getMonth() + 1).padStart(2, '0');
+                const year = d.getFullYear();
+                let hours = d.getHours();
+                const minutes = String(d.getMinutes()).padStart(2, '0');
+                const ampm = hours >= 12 ? 'PM' : 'AM';
+                hours = hours % 12 || 12;
+                return `${day}-${month}-${year}, ${String(hours).padStart(2, '0')}:${minutes}${ampm}`;
+            }
+            return str;
+        }
+
+        function getTodayFileDate() {
+            const today = new Date();
+            const d = String(today.getDate()).padStart(2, '0');
+            const m = String(today.getMonth() + 1).padStart(2, '0');
+            const y = today.getFullYear();
+            return `${d}-${m}-${y}`;
+        }
+
+        function exportToExcel() {
+            if (typeof XLSX === 'undefined') {
+                alert("Library Excel belum selesai dimuat turun. Sila cuba sebentar lagi.");
+                return;
+            }
+
+            const currentRole = localStorage.getItem('syifa_admin_role') || "Admin";
+            const isSuper = isUserSuperAdmin(currentRole);
+            const todayStr = getTodayFileDate();
+
+            let exportData = [];
+            let fileName = "";
+            let sheetName = "";
+
+            if (isSuper) {
+                if (currentSubTab === 'primary') {
+                    fileName = `SyifaCare_Senarai_Admin_${todayStr}.xlsx`;
+                    sheetName = "Senarai Admin";
+                    if (cachedAdminData.length === 0) return alert("Tiada data Admin untuk dieksport.");
+
+                    exportData = cachedAdminData.map((item, idx) => ({
+                        "Bil": idx + 1,
+                        "Nama Penuh": item.name || "-",
+                        "Username": item.username || "-",
+                        "No Telefon": item.phone || "-",
+                        "Peranan": item.role || "Admin"
+                    }));
+                } else {
+                    fileName = `SyifaCare_Laporan_Order_${todayStr}.xlsx`;
+                    sheetName = "Senarai Order";
+
+                    const startDate = document.getElementById('superadmin-start-date')?.value;
+                    const endDate = document.getElementById('superadmin-end-date')?.value;
+                    const filteredOrders = cachedOrdersData.filter(o => isOrderInCustomDateRange(o, startDate, endDate));
+
+                    if (filteredOrders.length === 0) return alert("Tiada data Order untuk dieksport dalam julat tarikh ini.");
+
+                    exportData = filteredOrders.map((item, idx) => {
+                        const cleanItemIc = String(item.ic || '').replace(/'/g, '').trim();
+                        const matchedCl = cachedClData.find(c => String(c.ic).replace(/'/g, '').trim() === cleanItemIc);
+                        const clDisplayName = matchedCl ? `${matchedCl.nama} (${cleanItemIc})` : cleanItemIc;
+
+                        return {
+                            "Bil": idx + 1,
+                            "Timestamp (Dicipta Pada)": formatExcelTimestamp(item.createdAt || item.tarikh),
+                            "Order ID": item.orderId || "-",
+                            "Nama CL (No IC)": clDisplayName,
+                            "Pakej": item.pakej || "-",
+                            "Tempoh": item.tempoh || "-",
+                            "Harga Pakej (RM)": parseFloat(item.harga || 0),
+                            "Tarikh Sesi": formatDisplayDate(item.tarikh),
+                            "Masa Sesi": formatDisplayTime(item.masa),
+                            "Nilai Komisyen (RM)": parseFloat(item.komisyen || 0)
+                        };
+                    });
+                }
+            } else {
+                if (currentSubTab === 'primary') {
+                    fileName = `SyifaCare_Senarai_CL_${todayStr}.xlsx`;
+                    sheetName = "Senarai CL";
+                    if (cachedClData.length === 0) return alert("Tiada data CL untuk dieksport.");
+
+                    exportData = cachedClData.map((item, idx) => ({
+                        "Bil": idx + 1,
+                        "Nama CL": item.nama || "-",
+                        "Lokasi Cover": item.lokasi || "-",
+                        "No Telefon": item.phone || "-",
+                        "No IC": String(item.ic || "-").replace(/'/g, ''),
+                        "Rating": parseFloat(item.rating || 5.0),
+                        "Jumlah Komisyen (RM)": parseFloat(item.komisyen || 0)
+                    }));
+                } else {
+                    fileName = `SyifaCare_Senarai_Order_${todayStr}.xlsx`;
+                    sheetName = "Senarai Order";
+                    if (cachedOrdersData.length === 0) return alert("Tiada data Order untuk dieksport.");
+
+                    exportData = cachedOrdersData.map((item, idx) => {
+                        const cleanItemIc = String(item.ic || '').replace(/'/g, '').trim();
+                        const matchedCl = cachedClData.find(c => String(c.ic).replace(/'/g, '').trim() === cleanItemIc);
+                        const clDisplayName = matchedCl ? `${matchedCl.nama} (${cleanItemIc})` : cleanItemIc;
+
+                        return {
+                            "Bil": idx + 1,
+                            "Timestamp (Dicipta Pada)": formatExcelTimestamp(item.createdAt || item.tarikh),
+                            "Order ID": item.orderId || "-",
+                            "Nama CL (No IC)": clDisplayName,
+                            "Pakej": item.pakej || "-",
+                            "Tempoh": item.tempoh || "-",
+                            "Harga Pakej (RM)": parseFloat(item.harga || 0),
+                            "Tarikh Sesi": formatDisplayDate(item.tarikh),
+                            "Masa Sesi": formatDisplayTime(item.masa),
+                            "Nilai Komisyen (RM)": parseFloat(item.komisyen || 0)
+                        };
+                    });
+                }
+            }
+
+            const worksheet = XLSX.utils.json_to_sheet(exportData);
+            const workbook = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(workbook, worksheet, sheetName);
+
+            const max_width = exportData.reduce((w, r) => {
+                return Object.keys(r).map((k, i) => {
+                    const cellValue = r[k] ? String(r[k]) : "";
+                    return Math.max(w[i] || k.length, cellValue.length + 3);
+                });
+            }, []);
+            worksheet['!cols'] = max_width.map(w => ({ wch: Math.min(Math.max(w, 10), 40) }));
+
+            XLSX.writeFile(workbook, fileName);
+        }
+
+        // BAKI KONTROL FORMS, MODALS DAN EVENTS DIKEKALKAN...
         function handleSaveFontSettings(e) {
             e.preventDefault();
             const headingFont = document.getElementById('setting-heading-font').value;
@@ -2989,7 +3253,6 @@ function fetchAndRenderDashboardTable() {
             });
         }
 
-        // ================= CRUD ADMIN =================
         function openAddAdminModal() {
             document.getElementById('admin-modal-title').innerText = "TAMBAH ADMIN BAHARU";
             document.getElementById('admin-target-username').value = "";
@@ -3026,65 +3289,58 @@ function fetchAndRenderDashboardTable() {
             document.body.style.overflow = '';
         }
 
-        // 1. KEMASKINI ADMIN (OPTIMISTIC UPDATE)
-function handleSaveAdmin(e) {
-    e.preventDefault();
-    const targetUsername = document.getElementById('admin-target-username').value;
-    const name = document.getElementById('form-name-input').value.trim();
-    const username = document.getElementById('form-username-input').value.trim();
-    const password = document.getElementById('form-password-input').value.trim();
-    const phone = document.getElementById('form-phone-input').value.trim();
-    const role = document.getElementById('form-role-input').value;
+        function handleSaveAdmin(e) {
+            e.preventDefault();
+            const targetUsername = document.getElementById('admin-target-username').value;
+            const name = document.getElementById('form-name-input').value.trim();
+            const username = document.getElementById('form-username-input').value.trim();
+            const password = document.getElementById('form-password-input').value.trim();
+            const phone = document.getElementById('form-phone-input').value.trim();
+            const role = document.getElementById('form-role-input').value;
 
-    const isEdit = Boolean(targetUsername);
-    const actionTitle = isEdit ? "Kemas Kini Admin" : "Tambah Admin Baharu";
-    const actionMsg = isEdit ? `Adakah anda pasti untuk mengemas kini maklumat Admin ${username}?` : `Adakah anda pasti untuk menambah Admin ${username}?`;
+            const isEdit = Boolean(targetUsername);
+            const actionTitle = isEdit ? "Kemas Kini Admin" : "Tambah Admin Baharu";
+            const actionMsg = isEdit ? `Adakah anda pasti untuk mengemas kini maklumat Admin ${username}?` : `Adakah anda pasti untuk menambah Admin ${username}?`;
 
-    showConfirmation(actionTitle, actionMsg, () => {
-        const submitBtn = document.getElementById('btn-admin-form-submit');
-        submitBtn.disabled = true;
-        submitBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> <span>MENYIMPAN...</span>`;
+            showConfirmation(actionTitle, actionMsg, () => {
+                const submitBtn = document.getElementById('btn-admin-form-submit');
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> <span>MENYIMPAN...</span>`;
 
-        const payload = {
-            target: "admin",
-            action: isEdit ? "update" : "add",
-            targetUsername: targetUsername,
-            name: name,
-            username: username,
-            password: password,
-            phone: phone,
-            role: role
-        };
+                postToAppsScript({
+                    target: "admin",
+                    action: isEdit ? "update" : "add",
+                    targetUsername: targetUsername,
+                    name: name,
+                    username: username,
+                    password: password,
+                    phone: phone,
+                    role: role
+                })
+                .then(res => {
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = `<span>Simpan Admin</span>`;
 
-        postToAppsScript(payload)
-        .then(res => {
-            submitBtn.disabled = false;
-            submitBtn.innerHTML = `<span>Simpan Admin</span>`;
-
-            if (res.success) {
-                // Kemaskini Cache Tempatan Tanpa Re-fetch (Instant)
-                if (isEdit) {
-                    const idx = cachedAdminData.findIndex(a => String(a.username).trim() === String(targetUsername).trim());
-                    if (idx !== -1) {
-                        cachedAdminData[idx] = { ...cachedAdminData[idx], name, username, phone, role };
+                    if (res.success) {
+                        if (isEdit) {
+                            const idx = cachedAdminData.findIndex(a => String(a.username).trim() === String(targetUsername).trim());
+                            if (idx !== -1) cachedAdminData[idx] = { ...cachedAdminData[idx], name, username, phone, role };
+                        } else {
+                            cachedAdminData.push({ username, name, phone, role });
+                        }
+                        closeAdminFormModal();
+                        renderCurrentDashboardTable();
+                    } else {
+                        alert("Gagal: " + (res.message || res.error));
                     }
-                } else {
-                    cachedAdminData.push({ username, name, phone, role });
-                }
-
-                closeAdminFormModal();
-                renderCurrentDashboardTable(); // Papar terus dari cache
-            } else {
-                alert("Gagal: " + (res.message || res.error));
-            }
-        })
-        .catch(err => {
-            submitBtn.disabled = false;
-            submitBtn.innerHTML = `<span>Simpan Admin</span>`;
-            alert("Ralat penghantaran: " + err.message);
-        });
-    });
-}
+                })
+                .catch(err => {
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = `<span>Simpan Admin</span>`;
+                    alert("Ralat penghantaran: " + err.message);
+                });
+            });
+        }
 
         function handleDeleteAdmin(username) {
             showConfirmation("Padam Rekod Admin", `Adakah anda pasti untuk memadam Admin ${username}?`, () => {
@@ -3105,7 +3361,6 @@ function handleSaveAdmin(e) {
             });
         }
 
-        // ================= CRUD CL =================
         function openAddClModal() {
             document.getElementById('cl-modal-title').innerText = "TAMBAH CL BAHARU";
             document.getElementById('cl-target-ic').value = "";
@@ -3145,67 +3400,60 @@ function handleSaveAdmin(e) {
             document.body.style.overflow = '';
         }
 
-        // 2. KEMASKINI CL (OPTIMISTIC UPDATE)
-function handleSaveCl(e) {
-    e.preventDefault();
-    const targetIc = document.getElementById('cl-target-ic').value;
-    const nama = document.getElementById('cl-nama-input').value.trim();
-    const lokasi = document.getElementById('cl-lokasi-input').value.trim();
-    const phone = document.getElementById('cl-phone-input').value.trim();
-    const ic = document.getElementById('cl-ic-input').value.trim();
-    const rating = parseFloat(document.getElementById('cl-rating-input').value);
-    const komisyen = parseFloat(document.getElementById('cl-komisyen-input').value);
+        function handleSaveCl(e) {
+            e.preventDefault();
+            const targetIc = document.getElementById('cl-target-ic').value;
+            const nama = document.getElementById('cl-nama-input').value.trim();
+            const lokasi = document.getElementById('cl-lokasi-input').value.trim();
+            const phone = document.getElementById('cl-phone-input').value.trim();
+            const ic = document.getElementById('cl-ic-input').value.trim();
+            const rating = parseFloat(document.getElementById('cl-rating-input').value);
+            const komisyen = parseFloat(document.getElementById('cl-komisyen-input').value);
 
-    const isEdit = Boolean(targetIc);
-    const actionTitle = isEdit ? "Kemas Kini CL" : "Tambah CL Baharu";
-    const actionMsg = isEdit ? `Adakah anda pasti untuk mengemas kini maklumat CL ${nama}?` : `Adakah anda pasti untuk menambah CL ${nama}?`;
+            const isEdit = Boolean(targetIc);
+            const actionTitle = isEdit ? "Kemas Kini CL" : "Tambah CL Baharu";
+            const actionMsg = isEdit ? `Adakah anda pasti untuk mengemas kini maklumat CL ${nama}?` : `Adakah anda pasti untuk menambah CL ${nama}?`;
 
-    showConfirmation(actionTitle, actionMsg, () => {
-        const submitBtn = document.getElementById('btn-cl-form-submit');
-        submitBtn.disabled = true;
-        submitBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> <span>MENYIMPAN...</span>`;
+            showConfirmation(actionTitle, actionMsg, () => {
+                const submitBtn = document.getElementById('btn-cl-form-submit');
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> <span>MENYIMPAN...</span>`;
 
-        const payload = {
-            target: "cl",
-            action: isEdit ? "update" : "add",
-            targetIc: targetIc,
-            nama: nama,
-            lokasi: lokasi,
-            phone: phone,
-            ic: ic,
-            rating: rating,
-            komisyen: komisyen
-        };
+                postToAppsScript({
+                    target: "cl",
+                    action: isEdit ? "update" : "add",
+                    targetIc: targetIc,
+                    nama: nama,
+                    lokasi: lokasi,
+                    phone: phone,
+                    ic: ic,
+                    rating: rating,
+                    komisyen: komisyen
+                })
+                .then(res => {
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = `<span>Simpan CL</span>`;
 
-        postToAppsScript(payload)
-        .then(res => {
-            submitBtn.disabled = false;
-            submitBtn.innerHTML = `<span>Simpan CL</span>`;
-
-            if (res.success) {
-                // Kemaskini Cache Tempatan Tanpa Re-fetch (Instant)
-                if (isEdit) {
-                    const idx = cachedClData.findIndex(c => String(c.ic).replace(/'/g, '').trim() === String(targetIc).replace(/'/g, '').trim());
-                    if (idx !== -1) {
-                        cachedClData[idx] = { ...cachedClData[idx], nama, lokasi, phone, ic, rating, komisyen };
+                    if (res.success) {
+                        if (isEdit) {
+                            const idx = cachedClData.findIndex(c => String(c.ic).replace(/'/g, '').trim() === String(targetIc).replace(/'/g, '').trim());
+                            if (idx !== -1) cachedClData[idx] = { ...cachedClData[idx], nama, lokasi, phone, ic, rating, komisyen };
+                        } else {
+                            cachedClData.push({ nama, lokasi, phone, ic, rating, komisyen });
+                        }
+                        closeClFormModal();
+                        renderCurrentDashboardTable();
+                    } else {
+                        alert("Gagal: " + (res.message || res.error));
                     }
-                } else {
-                    cachedClData.push({ nama, lokasi, phone, ic, rating, komisyen });
-                }
-
-                closeClFormModal();
-                renderCurrentDashboardTable(); // Papar terus
-            } else {
-                alert("Gagal: " + (res.message || res.error));
-            }
-        })
-        .catch(err => {
-            submitBtn.disabled = false;
-            submitBtn.innerHTML = `<span>Simpan CL</span>`;
-            alert("Ralat penghantaran: " + err.message);
-        });
-    });
-}
+                })
+                .catch(err => {
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = `<span>Simpan CL</span>`;
+                    alert("Ralat penghantaran: " + err.message);
+                });
+            });
+        }
 
         function handleDeleteCl(ic) {
             showConfirmation("Padam Rekod CL", `Adakah anda pasti untuk memadam CL dengan No IC ${ic}?`, () => {
@@ -3226,12 +3474,8 @@ function handleSaveCl(e) {
             });
         }
 
-        // ================= CRUD ORDERS =================
         function openAddOrderModal() {
-            if (cachedClData.length === 0) {
-                alert("Tiada Confinement Lady (CL) berdaftar! Sila tambah CL terlebih dahulu.");
-                return;
-            }
+            if (cachedClData.length === 0) return alert("Tiada Confinement Lady (CL) berdaftar! Sila tambah CL terlebih dahulu.");
 
             document.getElementById('order-modal-title').innerText = "TAMBAH ORDER BAHARU";
             document.getElementById('order-target-id').value = "";
@@ -3252,7 +3496,6 @@ function handleSaveCl(e) {
             }
 
             updatePackageOptionsAndPrice();
-
             document.getElementById('order-form-modal')?.classList.remove('hidden');
             document.body.style.overflow = 'hidden';
         }
@@ -3303,68 +3546,63 @@ function handleSaveCl(e) {
             document.body.style.overflow = '';
         }
 
-        // 3. KEMASKINI ORDER (OPTIMISTIC UPDATE)
-function handleSaveOrder(e) {
-    e.preventDefault();
-    const targetOrderId = document.getElementById('order-target-id').value;
-    const clIc = document.getElementById('order-cl-select').value;
-    const pakej = document.getElementById('order-pakej-select').value;
-    const tempoh = document.getElementById('order-tempoh-select').value;
-    const harga = parseFloat(document.getElementById('order-harga-input').value);
-    const tarikh = document.getElementById('order-tarikh-input').value;
-    const masa = document.getElementById('order-masa-input').value;
-    const komisyen = parseFloat(document.getElementById('order-komisyen-input').value);
+        function handleSaveOrder(e) {
+            e.preventDefault();
+            const targetOrderId = document.getElementById('order-target-id').value;
+            const clIc = document.getElementById('order-cl-select').value;
+            const pakej = document.getElementById('order-pakej-select').value;
+            const tempoh = document.getElementById('order-tempoh-select').value;
+            const harga = parseFloat(document.getElementById('order-harga-input').value);
+            const tarikh = document.getElementById('order-tarikh-input').value;
+            const masa = document.getElementById('order-masa-input').value;
+            const komisyen = parseFloat(document.getElementById('order-komisyen-input').value);
 
-    const isEdit = Boolean(targetOrderId);
-    const actionTitle = isEdit ? "Kemas Kini Order" : "Tambah Order Baharu";
-    const actionMsg = isEdit ? `Adakah anda pasti untuk mengemas kini Order ID ${targetOrderId}?` : `Adakah anda pasti untuk menambah tempahan ${pakej} (${tempoh})?`;
+            const isEdit = Boolean(targetOrderId);
+            const actionTitle = isEdit ? "Kemas Kini Order" : "Tambah Order Baharu";
+            const actionMsg = isEdit ? `Adakah anda pasti untuk mengemas kini Order ID ${targetOrderId}?` : `Adakah anda pasti untuk menambah tempahan ${pakej} (${tempoh})?`;
 
-    showConfirmation(actionTitle, actionMsg, () => {
-        const submitBtn = document.getElementById('btn-order-form-submit');
-        submitBtn.disabled = true;
-        submitBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> <span>MENYIMPAN...</span>`;
+            showConfirmation(actionTitle, actionMsg, () => {
+                const submitBtn = document.getElementById('btn-order-form-submit');
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> <span>MENYIMPAN...</span>`;
 
-        const payload = {
-            target: "order",
-            action: isEdit ? "update" : "add",
-            orderId: targetOrderId,
-            ic: clIc,
-            pakej: pakej,
-            tempoh: tempoh,
-            harga: harga,
-            tarikh: tarikh,
-            masa: masa,
-            komisyen: komisyen
-        };
+                postToAppsScript({
+                    target: "order",
+                    action: isEdit ? "update" : "add",
+                    orderId: targetOrderId,
+                    ic: clIc,
+                    pakej: pakej,
+                    tempoh: tempoh,
+                    harga: harga,
+                    tarikh: tarikh,
+                    masa: masa,
+                    komisyen: komisyen
+                })
+                .then(res => {
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = `<span>Simpan Order</span>`;
 
-        postToAppsScript(payload)
-        .then(res => {
-            submitBtn.disabled = false;
-            submitBtn.innerHTML = `<span>Simpan Order</span>`;
-
-            if (res.success) {
-                // Selepas tambah/kemaskini Order, muat semula data di belakang tab supaya pengiraan komisen di Apps Script diselaraskan dengan tepat
-                fetchDataFromSheet().then(result => {
-                    if (result.success) {
-                        cachedAdminData = result.admins || [];
-                        cachedClData = result.cl || [];
-                        cachedOrdersData = result.orders || [];
-                        renderCurrentDashboardTable();
+                    if (res.success) {
+                        fetchDataFromSheet().then(result => {
+                            if (result.success) {
+                                cachedAdminData = result.admins || [];
+                                cachedClData = result.cl || [];
+                                cachedOrdersData = result.orders || [];
+                                renderCurrentDashboardTable();
+                            }
+                        });
+                        closeOrderFormModal();
+                    } else {
+                        alert("Gagal: " + (res.message || res.error));
                     }
+                })
+                .catch(err => {
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = `<span>Simpan Order</span>`;
+                    alert("Ralat penghantaran: " + err.message);
                 });
-
-                closeOrderFormModal();
-            } else {
-                alert("Gagal: " + (res.message || res.error));
-            }
-        })
-        .catch(err => {
-            submitBtn.disabled = false;
-            submitBtn.innerHTML = `<span>Simpan Order</span>`;
-            alert("Ralat penghantaran: " + err.message);
-        });
-    });
-}
+            });
+        }
 
         function handleDeleteOrder(orderId) {
             showConfirmation("Padam Order", `Adakah anda pasti untuk memadam Order ID ${orderId}? Komisen CL akan dikira semula secara automatik.`, () => {
@@ -3404,203 +3642,15 @@ function handleSaveOrder(e) {
 
         window.addEventListener('DOMContentLoaded', () => {
             updateNavState();
-            
             fetchDataFromSheet().then(result => {
                 if (result.success && result.settings) {
                     applyDynamicFonts(result.settings.heading_font, result.settings.body_font);
                 }
             });
-
             if (localStorage.getItem('syifa_admin_logged_in')) {
                 showPage('admin');
             }
         });
-	
-	// Helper untuk Format Timestamp Eksport Excel: DD-MM-YYYY, HH:MM AM/PM
-function formatExcelTimestamp(rawVal) {
-    if (!rawVal) {
-        const now = new Date();
-        const d = String(now.getDate()).padStart(2, '0');
-        const m = String(now.getMonth() + 1).padStart(2, '0');
-        const y = now.getFullYear();
-        let hours = now.getHours();
-        const minutes = String(now.getMinutes()).padStart(2, '0');
-        const ampm = hours >= 12 ? 'PM' : 'AM';
-        hours = hours % 12;
-        hours = hours ? hours : 12;
-        return `${d}-${m}-${y}, ${String(hours).padStart(2, '0')}:${minutes}${ampm}`;
-    }
-
-    let str = String(rawVal).replace(/'/g, '').trim();
-
-    // Jika tarikh sudah mengandungi koma (cth: "05/08/2026, 05:52PM")
-    if (str.includes(',')) {
-        const parts = str.split(',');
-        const datePart = parts[0].trim().replace(/\//g, '-');
-        const timePart = parts[1].trim();
-        return `${datePart}, ${timePart}`;
-    }
-
-    // Jika Date Objek / String ISO / GMT
-    const d = new Date(str);
-    if (!isNaN(d.getTime())) {
-        const day = String(d.getDate()).padStart(2, '0');
-        const month = String(d.getMonth() + 1).padStart(2, '0');
-        const year = d.getFullYear();
-        let hours = d.getHours();
-        const minutes = String(d.getMinutes()).padStart(2, '0');
-        const ampm = hours >= 12 ? 'PM' : 'AM';
-        hours = hours % 12;
-        hours = hours ? hours : 12;
-        return `${day}-${month}-${year}, ${String(hours).padStart(2, '0')}:${minutes}${ampm}`;
-    }
-
-    return str;
-}
-
-// Helper untuk dapatkan tarikh harini format DD-MM-YYYY (untuk nama fail)
-function getTodayFileDate() {
-    const today = new Date();
-    const d = String(today.getDate()).padStart(2, '0');
-    const m = String(today.getMonth() + 1).padStart(2, '0');
-    const y = today.getFullYear();
-    return `${d}-${m}-${y}`;
-}
-
-// FUNGSI UTAMA: EKSPORT KE FAIL EXCEL (.XLSX)
-function exportToExcel() {
-    if (typeof XLSX === 'undefined') {
-        alert("Library Excel belum selesai dimuat turun. Sila cuba sebentar lagi.");
-        return;
-    }
-
-    const currentRole = localStorage.getItem('syifa_admin_role') || "Admin";
-    const isSuper = isUserSuperAdmin(currentRole);
-    const todayStr = getTodayFileDate();
-
-    let exportData = [];
-    let fileName = "";
-    let sheetName = "";
-
-    if (isSuper) {
-        if (currentSubTab === 'primary') {
-            // EKSPORE SENARAI ADMIN (SUPERADMIN)
-            fileName = `SyifaCare_Senarai_Admin_${todayStr}.xlsx`;
-            sheetName = "Senarai Admin";
-
-            if (cachedAdminData.length === 0) {
-                alert("Tiada data Admin untuk dieksport.");
-                return;
-            }
-
-            exportData = cachedAdminData.map((item, idx) => ({
-                "Bil": idx + 1,
-                "Nama Penuh": item.name || "-",
-                "Username": item.username || "-",
-                "No Telefon": item.phone || "-",
-                "Peranan": item.role || "Admin"
-            }));
-        } else {
-            // EKSPORT SENARAI ORDER (SUPERADMIN WITH DATE FILTER)
-            fileName = `SyifaCare_Laporan_Order_${todayStr}.xlsx`;
-            sheetName = "Senarai Order";
-
-            const startDate = document.getElementById('superadmin-start-date')?.value;
-            const endDate = document.getElementById('superadmin-end-date')?.value;
-            const filteredOrders = cachedOrdersData.filter(o => isOrderInCustomDateRange(o, startDate, endDate));
-
-            if (filteredOrders.length === 0) {
-                alert("Tiada data Order untuk dieksport dalam julat tarikh ini.");
-                return;
-            }
-
-            exportData = filteredOrders.map((item, idx) => {
-                const cleanItemIc = String(item.ic || '').replace(/'/g, '').trim();
-                const matchedCl = cachedClData.find(c => String(c.ic).replace(/'/g, '').trim() === cleanItemIc);
-                const clDisplayName = matchedCl ? `${matchedCl.nama} (${cleanItemIc})` : cleanItemIc;
-
-                return {
-                    "Bil": idx + 1,
-                    "Timestamp (Dicipta Pada)": formatExcelTimestamp(item.createdAt || item.tarikh),
-                    "Order ID": item.orderId || "-",
-                    "Nama CL (No IC)": clDisplayName,
-                    "Pakej": item.pakej || "-",
-                    "Tempoh": item.tempoh || "-",
-                    "Harga Pakej (RM)": parseFloat(item.harga || 0),
-                    "Tarikh Sesi": formatDisplayDate(item.tarikh),
-                    "Masa Sesi": formatDisplayTime(item.masa),
-                    "Nilai Komisyen (RM)": parseFloat(item.komisyen || 0)
-                };
-            });
-        }
-    } else {
-        if (currentSubTab === 'primary') {
-            // EKSPORT SENARAI CL (ADMIN BIASA)
-            fileName = `SyifaCare_Senarai_CL_${todayStr}.xlsx`;
-            sheetName = "Senarai CL";
-
-            if (cachedClData.length === 0) {
-                alert("Tiada data CL untuk dieksport.");
-                return;
-            }
-
-            exportData = cachedClData.map((item, idx) => ({
-                "Bil": idx + 1,
-                "Nama CL": item.nama || "-",
-                "Lokasi Cover": item.lokasi || "-",
-                "No Telefon": item.phone || "-",
-                "No IC": String(item.ic || "-").replace(/'/g, ''),
-                "Rating": parseFloat(item.rating || 5.0),
-                "Jumlah Komisyen (RM)": parseFloat(item.komisyen || 0)
-            }));
-        } else {
-            // EKSPORT SENARAI ORDER (ADMIN BIASA)
-            fileName = `SyifaCare_Senarai_Order_${todayStr}.xlsx`;
-            sheetName = "Senarai Order";
-
-            if (cachedOrdersData.length === 0) {
-                alert("Tiada data Order untuk dieksport.");
-                return;
-            }
-
-            exportData = cachedOrdersData.map((item, idx) => {
-                const cleanItemIc = String(item.ic || '').replace(/'/g, '').trim();
-                const matchedCl = cachedClData.find(c => String(c.ic).replace(/'/g, '').trim() === cleanItemIc);
-                const clDisplayName = matchedCl ? `${matchedCl.nama} (${cleanItemIc})` : cleanItemIc;
-
-                return {
-                    "Bil": idx + 1,
-                    "Timestamp (Dicipta Pada)": formatExcelTimestamp(item.createdAt || item.tarikh),
-                    "Order ID": item.orderId || "-",
-                    "Nama CL (No IC)": clDisplayName,
-                    "Pakej": item.pakej || "-",
-                    "Tempoh": item.tempoh || "-",
-                    "Harga Pakej (RM)": parseFloat(item.harga || 0),
-                    "Tarikh Sesi": formatDisplayDate(item.tarikh),
-                    "Masa Sesi": formatDisplayTime(item.masa),
-                    "Nilai Komisyen (RM)": parseFloat(item.komisyen || 0)
-                };
-            });
-        }
-    }
-
-    // Bina Lembaran Kerja & Fail Excel
-    const worksheet = XLSX.utils.json_to_sheet(exportData);
-    const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, sheetName);
-
-    // Laraskan Lebar Lajur Automatik
-    const max_width = exportData.reduce((w, r) => {
-        return Object.keys(r).map((k, i) => {
-            const cellValue = r[k] ? String(r[k]) : "";
-            return Math.max(w[i] || k.length, cellValue.length + 3);
-        });
-    }, []);
-    worksheet['!cols'] = max_width.map(w => ({ wch: Math.min(Math.max(w, 10), 40) }));
-
-    // Muat Turun Fail Excel
-    XLSX.writeFile(workbook, fileName);
-}
     </script>
 </body>
 </html>
