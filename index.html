@@ -2540,21 +2540,36 @@
             }
         }
 
-        function postToAppsScript(payload) {
-            return fetch(APPS_SCRIPT_URL, {
-                method: "POST",
-                headers: { "Content-Type": "text/plain" },
-                body: JSON.stringify(payload)
-            })
-            .then(res => res.text())
-            .then(text => JSON.parse(text));
-        }
+// Tambah fungsi pembantu ini untuk menapis maklum balas HTML
+function safeJsonParse(text) {
+    const trimmed = text ? text.trim() : "";
+    if (trimmed.startsWith('<') || trimmed.startsWith('<!DOCTYPE')) {
+        throw new Error("Google Apps Script memulangkan HTML (berkemungkinan masalah kebenaran Deployment atau URL tidak sah). Pastikan 'Who has access' di-set ke 'Anyone'.");
+    }
+    try {
+        return JSON.parse(text);
+    } catch (e) {
+        throw new Error("Format JSON dari server tidak sah: " + text.substring(0, 100));
+    }
+}
+    
+        // Kemas kini fungsi postToAppsScript
+function postToAppsScript(payload) {
+    return fetch(APPS_SCRIPT_URL, {
+        method: "POST",
+        headers: { "Content-Type": "text/plain" }, // Dikekalkan text/plain untuk mengelak isu preflight CORS
+        body: JSON.stringify(payload)
+    })
+    .then(res => res.text())
+    .then(text => safeJsonParse(text));
+}
 
-        function fetchDataFromSheet() {
-            return fetch(APPS_SCRIPT_URL)
-                .then(res => res.text())
-                .then(text => JSON.parse(text));
-        }
+        // Kemas kini fungsi fetchDataFromSheet
+function fetchDataFromSheet() {
+    return fetch(APPS_SCRIPT_URL)
+        .then(res => res.text())
+        .then(text => safeJsonParse(text));
+}
 
         function handleAdminNavClick() {
             const currentAdmin = localStorage.getItem('syifa_admin_logged_in');
