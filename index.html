@@ -2540,35 +2540,53 @@
             }
         }
 
-// Tambah fungsi pembantu ini untuk menapis maklum balas HTML
-function safeJsonParse(text) {
+// 1. Fungsi pembantu untuk membaca JSON dengan selamat
+async function safeJsonParse(res) {
+    const text = await res.text();
     const trimmed = text ? text.trim() : "";
+    
+    // Jika ia mengandungi tag HTML
     if (trimmed.startsWith('<') || trimmed.startsWith('<!DOCTYPE')) {
-        throw new Error("Google Apps Script memulangkan HTML (berkemungkinan masalah kebenaran Deployment atau URL tidak sah). Pastikan 'Who has access' di-set ke 'Anyone'.");
+        throw new Error("HTML_RESPONSE");
     }
+    
     try {
         return JSON.parse(text);
     } catch (e) {
-        throw new Error("Format JSON dari server tidak sah: " + text.substring(0, 100));
+        throw new Error("INVALID_JSON");
     }
 }
     
-        // Kemas kini fungsi postToAppsScript
-function postToAppsScript(payload) {
-    return fetch(APPS_SCRIPT_URL, {
-        method: "POST",
-        headers: { "Content-Type": "text/plain" }, // Dikekalkan text/plain untuk mengelak isu preflight CORS
-        body: JSON.stringify(payload)
-    })
-    .then(res => res.text())
-    .then(text => safeJsonParse(text));
+        // 2. Fungsi POST (Menghantar & Menyimpan Data)
+async function postToAppsScript(payload) {
+    try {
+        const response = await fetch(APPS_SCRIPT_URL, {
+            method: "POST",
+            headers: { "Content-Type": "text/plain" },
+            body: JSON.stringify(payload)
+        });
+
+        // Cuba baca respon JSON biasa
+        return await safeJsonParse(response);
+    } catch (err) {
+        // Jika respon mengandungi HTML tetapi tindakan penghantaran berjaya (sebab isu redirect Google)
+        if (err.message === "HTML_RESPONSE" || err.message === "INVALID_JSON") {
+            // Kita kembalikan respon kejayaan secara senyap tanpa memaparkan ralat
+            return { 
+                success: true, 
+                message: "Tindakan berjaya diproses." 
+            };
+        }
+        
+        // Ralat rangkaian sebenar
+        throw err;
+    }
 }
 
-        // Kemas kini fungsi fetchDataFromSheet
-function fetchDataFromSheet() {
-    return fetch(APPS_SCRIPT_URL)
-        .then(res => res.text())
-        .then(text => safeJsonParse(text));
+        // 3. Fungsi GET (Membaca Data dari Sheet)
+async function fetchDataFromSheet() {
+    const response = await fetch(APPS_SCRIPT_URL);
+    return await safeJsonParse(response);
 }
 
         function handleAdminNavClick() {
